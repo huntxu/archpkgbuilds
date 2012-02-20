@@ -1,1 +1,7 @@
 PKGBUILDs for Hunt's archlinux packages repo.
+
+README: this file
+pre-commit.pl & prepare-commit-msg.pl: git hooks
+getver.sh: a script used in pre-commit.pl
+whatneedupdate.pl: as its name implies
+versions: version information of packages
