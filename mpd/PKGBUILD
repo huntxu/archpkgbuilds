@@ -1,0 +1,76 @@
+pkgname=mpd
+pkgver=0.16.7
+pkgrel=1
+pkgdesc="Music daemon that plays MP3, FLAC, and Ogg Vorbis files"
+arch=('i686' 'x86_64')
+license=('GPL')
+url="http://mpd.wikia.com/wiki/Server"
+depends=('sqlite3' 'libmad' 'flac' 'lame' 'libvorbis' 'libcue')
+makedepends=('pkgconfig')
+source=("http://downloads.sourceforge.net/musicpd/${pkgname}-${pkgver}.tar.bz2")
+md5sums=('3d0e7c36646e80386b32966bd4268e8d')
+
+build() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  ./configure --prefix=/usr \
+    --sysconfdir=/etc \
+    --enable-alsa \
+    --disable-ao \
+    --disable-audiofile \
+    --disable-bzip2 \
+    --enable-cue \
+    --disable-curl \
+    --disable-debug \
+    --disable-documentation \
+    --disable-ffado \
+    --disable-ffmpeg \
+    --disable-fifo \
+    --enable-flac \
+    --disable-fluidsynth \
+    --disable-gme \
+    --disable-gprof \
+    --disable-httpd-output \
+    --disable-id3 \
+    --enable-inotify \
+    --disable-ipv6 \
+    --disable-iso9660 \
+    --disable-jack \
+    --disable-largefile \
+    --disable-lastfm \
+    --enable-lame-encoder \
+    --disable-libwrap \
+    --disable-lsr \
+    --enable-mad \
+    --disable-mikmod \
+    --disable-mms \
+    --disable-modplug \
+    --disable-mpc \
+    --disable-mpg123 \
+    --disable-mvp \
+    --enable-oggflac \
+    --disable-openal \
+    --disable-oss \
+    --disable-pipe-output \
+    --disable-pulse \
+    --disable-recorder-output \
+    --disable-sidplay \
+    --disable-shout \
+    --disable-sndfile \
+    --enable-sqlite \
+    --enable-tcp \
+    --disable-test \
+    --disable-twolame-encoder \
+    --enable-un \
+    --enable-vorbis \
+    --enable-vorbis-encoder \
+    --disable-wave-encoder \
+    --disable-wavpack \
+    --disable-werror \
+    --disable-wildmidi \
+    --disable-zzip \
+    --disable-aac \
+    --with-zeroconf=no
+
+  make
+  make DESTDIR=${pkgdir} install
+}

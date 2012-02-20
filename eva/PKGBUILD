@@ -1,0 +1,38 @@
+# Contributor: HuntXu <huntxu@live.cn>
+# Use kdemod3(kde-legacy), which has libaRts to enable sound support
+# Please edit your /etc/pacman.conf
+# See http://wiki.archlinux.org/index.php/Kdemod
+pkgname=eva-svn
+pkgver=58
+pkgrel=1
+arch=('i686' 'x86_64')
+pkgdesc="QQ protocol instant messaging client for KDE(KDEmod3)."
+url="http://sourceforge.net/projects/evaq"
+license="GPL"
+depends=('kdelibs3')
+makedepends=('pkgconfig' 'make' 'subversion' 'autoconf' 'automake')
+
+_svntrunk=https://evaq.svn.sourceforge.net/svnroot/evaq/branches/eva-qt3-bugfix/eva
+_svnmod=eva
+
+build() {
+  cd $startdir/src
+  svn co $_svntrunk --config-dir ./ -r $pkgver $_svnmod > /dev/null  2>&1
+  cd $_svnmod
+  msg "SVN checkout done or server timeout"
+  msg "Starting configuring"
+  chmod a+x ./admin/detect-autoconf.pl
+  make -f ./admin/Makefile.common cvs || return 1
+  mkdir ../$_svnmod-build
+  cd ../$_svnmod-build
+  ../$_svnmod/configure --prefix=/opt/kde --with-qt-dir=/opt/qt --without-arts || return 1
+  msg "configure done, start making"
+  make > /dev/null  2>&1 || return 1
+  msg "a lot of warnings here, takes quite a long time"
+  make DESTDIR=$startdir/pkg/ install 
+  msg "boring installation informations"
+  sed 's|Exec=eva|Exec=/opt/kde/bin/eva|' -i $startdir/pkg/opt/kde/share/applications/kde/eva.desktop || return 1
+  sed 's|Icon=eva|Icon=/opt/kde/share/icons/hicolor/48x48/apps/eva.png|' -i $startdir/pkg/opt/kde/share/applications/kde/eva.desktop || return 1
+  install -Dm644 $startdir/pkg/opt/kde/share/applications/kde/eva.desktop $startdir/pkg/usr/share/applications/eva.desktop
+  rm -r $startdir/src/$_svnmod-build
+}

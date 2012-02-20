@@ -1,0 +1,19 @@
+pkgname=mldonkey
+pkgver=3.1.0
+pkgrel=3
+pkgdesc="A multi-network P2P client"
+arch=('i686' 'x86_64')
+url="http://mldonkey.sourceforge.net/"
+license=('GPL')
+depends=('file')
+makedepends=('ocaml')
+source=(http://downloads.sourceforge.net/sourceforge/${pkgname}/${pkgname}-${pkgver}.tar.bz2)
+md5sums=('072726d158ba1e936c554be341e7ceff')
+
+build() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  ./configure --prefix=/usr \
+              --enable-minimum
+  make
+  make DESTDIR=${pkgdir} install
+}

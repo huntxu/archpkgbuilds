@@ -1,0 +1,39 @@
+pkgname=sdcv
+pkgver=0.4.2
+pkgrel=6
+pkgdesc="StarDict Console Version"
+arch=('i686' 'x86_64')
+url="http://sdcv.sourceforge.net/"
+license=('GPL')
+depends=('glib2' 'readline' 'zlib')
+makedepends=('patch')
+provides=('stardict')
+changelog=$pkgname.changelog
+source=(http://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.bz2
+        $pkgname-patches.patch)
+sha256sums=('a164f079e93986814ea2d39f3a49cf9d1b71b01aad908254457fe3d0ded9deb2'
+            'f37f794b0dc32e2fcff8a5b52af51ffa65dabb7447c6efaba75a5092ed00a484')
+
+build() {
+  cd ${srcdir}/$pkgname-$pkgver
+
+  patch -Np1 -i ${srcdir}/${pkgname}-patches.patch
+
+  ./configure --prefix=/usr \
+              --mandir=/usr/share/man \
+              --disable-nls \
+              --without-libintl
+#quick fix for x86_64
+  if [ "${CARCH}" == "x86_64" ]; then
+    sed -i 's|guint32 page_size|guint64 page_size|' src/lib/lib.cpp
+  fi
+
+  make
+}
+
+package() {
+  cd ${srcdir}/$pkgname-$pkgver
+
+  make DESTDIR=${pkgdir} install
+  rm -rf ${pkgdir}/usr/share/man/uk
+}

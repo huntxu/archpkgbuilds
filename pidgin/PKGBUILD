@@ -1,0 +1,67 @@
+pkgname=pidgin
+pkgver=2.10.1
+pkgrel=1
+arch=('i686' 'x86_64')
+url="http://pidgin.im/"
+license=('GPL')
+depends=('gnutls' 'nss' 'dbus-glib' 'hicolor-icon-theme' 'startup-notification' 'libxss')
+makedepends=('intltool' 'ca-certificates' 'git' 'python2')
+optdepends=('avahi: Bonjour protocol support'
+            'tk: Tcl/Tk scripting support'
+            'ca-certificates: SSL CA certificates')
+install=pidgin.install
+source=(http://downloads.sourceforge.net/$pkgname/$pkgname-$pkgver.tar.bz2)
+sha256sums=('2f28bddc5edcd714d607d74126c8958ae7c258602b3929e3e6e783d3cb1beac8')
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  # Use Python 2
+  sed -i 's/env python$/&2/' */plugins/*.py \
+    libpurple/purple-{remote,notifications-example,url-handler}
+  sed -i -r 's/(pidgin_LDFLAGS =)/\1 -lm/' pidgin/Makefile.am
+  autoreconf
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --disable-largefile \
+    --disable-nls \
+    --disable-nls \
+    --enable-gtkui \
+    --disable-consoleui \
+    --enable-screensaver \
+    --disable-sm \
+    --enable-startup-notification \
+    --disable-gtkspell \
+    --disable-gevolution \
+    --enable-cap \
+    --disable-gestures \
+    --disable-schemas-install \
+    --disable-gstreamer \
+    --disable-gstreamer-interfaces \
+    --disable-farsight \
+    --disable-vv \
+    --disable-idn \
+    --disable-meanwhile \
+    --disable-avahi \
+    --enable-plugins \
+    --disable-fortify \
+    --enable-dbus \
+    --disable-nm \
+    --disable-mono \
+    --enable-perl \
+    --enable-gnutls \
+    --enable-nss \
+    --disable-tcl \
+    --disable-tk \
+    --disable-cyrus-sasl \
+    --disable-doxygen \
+    --disable-dot \
+    --disable-devhelp \
+    --disable-debug \
+    --with-dynamic-prpls="jabber" \
+    --with-system-ssl-certs=/etc/ssl/certs \
+    --with-python=/usr/bin/python2
+  make
+  make DESTDIR="${pkgdir}" install
+}

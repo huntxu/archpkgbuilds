@@ -1,0 +1,37 @@
+pkgname=android-sdk
+pkgver=r16
+pkgrel=1
+pkgdesc='Google Android SDK'
+arch=('i686' 'x86_64')
+url="http://developer.android.com/sdk/index.html"
+license=('custom')
+depends=('java-runtime' 'alsa-lib' 'openal' 'libstdc++5' 'libxv'
+         'ncurses' 'sdl' 'swt' 'zlib')
+[[ $CARCH = x86_64 ]] && depends=('java-runtime' 'lib32-alsa-lib'
+                                  'lib32-openal' 'lib32-libstdc++5'
+                                  'lib32-libxv' 'lib32-ncurses' 'lib32-sdl'
+                                  'lib32-zlib' 'swt')
+install=$pkgname.install
+optdepends=('android-udev: udev rules for Android devices'
+            'android-sdk-platform-tools: adb, aapt, aidl, dexdump and dx')
+source=(http://dl.google.com/android/${pkgname}_$pkgver-linux.tgz
+        $pkgname.sh
+        $pkgname.csh
+        license.html)
+
+sha1sums=('c12f2431f243d7f2b7f61168d2839dcd36726176'
+          '78f8574e651c9bf8b7515ecb30c7ef93edbc4a96'
+          '08c85aab7523e22b298891c7047bc0e7adbf3437'
+          'bfb91be7e0b602d765b7a1fcaf0ce1b7e1a93faa')
+
+package() {
+  cd "$pkgdir"
+  install -Dm755 "$srcdir/$pkgname.sh" etc/profile.d/$pkgname.sh
+  install -Dm755 "$srcdir/$pkgname.csh" etc/profile.d/$pkgname.csh
+  mkdir -p opt
+  cp -a "$srcdir/$pkgname-linux" opt/$pkgname
+  install -Dm644 "$srcdir/license.html" \
+    usr/share/licenses/$pkgname/license.html
+  # Fix broken permissions
+  chmod -R o=g opt/$pkgname
+}

@@ -1,0 +1,32 @@
+# Contributor: Andrej Gelenberg <andrej.gelenberg@udo.edu>
+pkgname=nc
+pkgver=1.89
+pkgrel=3
+pkgdesc="TCP/IP swiss army knife. OpenBSD variant."
+arch=('i686' 'x86_64')
+url="http://packages.debian.org/sid/netcat-openbsd"
+license=('BSD')
+depends=('glib2')
+makedepends=('gcc' 'make')
+source=("http://ftp.debian.org/debian/pool/main/n/netcat-openbsd/netcat-openbsd_${pkgver}.orig.tar.gz" "http://ftp.debian.org/debian/pool/main/n/netcat-openbsd/netcat-openbsd_${pkgver}-${pkgrel}.diff.gz")
+md5sums=('7238ce15aae43069e96ba7faf03f153e'
+         '438bdbf2533380f285f58468c323b8e7')
+sha256sums=('72e844dde8a2a7cba61971d493758dbea9ef0b164bccef15fd4a36490dc77f2b'
+             '9b8e315cf62567c0f564fdef8dcf66e48ffe346f18562c6d14c345b39dab364b')
+
+build() {
+	cd ${startdir}/src/netcat-openbsd-${pkgver}.orig
+	patch -p1 < ../netcat-openbsd_${pkgver}-${pkgrel}.diff
+	for i in `cat debian/patches/series`
+	do
+		echo "** patch $i" 1>&2
+		cat "debian/patches/$i"
+	done | patch -p1 
+	make CFLAGS="$CFLAGS -DDEBIAN_VERSION=\"\\\"${pkgrel}\\\"\""
+	install -d ${startdir}/pkg/usr/bin/
+	install -d ${startdir}/pkg/usr/share/man/man1/
+	install nc ${startdir}/pkg/usr/bin/nc
+	install nc.1 ${startdir}/pkg/usr/share/man/man1/nc.1
+}
+
+# vim:ts=4:sw=4:noet:enc=utf-8:

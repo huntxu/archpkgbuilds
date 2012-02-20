@@ -1,0 +1,103 @@
+# Maintainer: Gerardo Exequiel Pozzi <vmlinuz386@yahoo.com.ar>
+
+# *WARNING*
+# This eglibc is ABI compatible with the GNU glibc, so you can replace
+# the existent glibc with this. In *theory* do not have any problems.
+# I am running it on a chroot enviroment and on a virtual machine.
+# The intention of this PKGBUILD is only for *testing purposes*.
+# *WARNING*
+#
+# For rebuild the toolchain this is the proper order:
+# kernel-headers -> eglibc -> binutils -> gcc-libs -> gcc -> binutils -> eglibc
+
+pkgname=eglibc
+pkgver=8848
+pkgrel=1
+pkgdesc="Embedded GLIBC is a variant of the GNU C Library that is designed to work well on embedded systems"
+arch=('i686' 'x86_64')
+url="http://www.eglibc.org"
+license=('GPL' 'LGPL')
+depends=('kernel-headers' 'tzdata')
+makedepends=('subversion' 'gperf')
+provides=('glibc=2.10.1')
+conflicts=('glibc')
+#replaces=('glibc')
+backup=(etc/locale.gen etc/nscd.conf)
+#options=('purge')
+install=eglibc.install
+source=(locale-gen
+	locale.gen.txt
+	nscd)
+md5sums=('476e9113489f93b348b21e144b6a8fcf'
+         '07ac979b6ab5eeb778d55f041529d623'
+         'b587ee3a70c9b3713099295609afde49')
+
+_svntrunk=svn://svn.eglibc.org/trunk/libc
+_svnmod=libc
+
+build() {
+  cd $srcdir
+
+  svn up ../$_svnmod &>/dev/null || return 1
+  cp -a ../$_svnmod ./
+  cd $_svnmod || return 1
+
+  # Fix SVN timestamp to prevent regenerating configure files.
+  find -name 'configure' | xargs touch
+
+  # Don not build timezones
+  sed -i 's/timezone rt/rt/' Makeconfig || return 1
+  # Disable problematic gethostbyname4()
+  # sed -i '/_nss_dns_gethostbyname4_r/d' resolv/Versions || return 1
+
+  mkdir eglibc-build
+  cd eglibc-build
+
+  # Xen dom0 fix speed penalty on x86
+  [ "$CARCH" = "i686" ] && export CFLAGS="$CFLAGS -mno-tls-direct-seg-refs"
+
+  echo "slibdir=/lib" >> configparms
+
+  ../configure --prefix=/usr \
+	       --mandir=/usr/share/info \
+	       --infodir=/usr/share/info \
+	       --libdir=/usr/lib \
+	       --libexecdir=/usr/lib \
+	       --with-headers=/usr/include \
+	       --enable-kernel=2.6.30 \
+	       --enable-add-ons=nptl,libidn \
+	       --disable-profile \
+	       --enable-bind-now \
+	       --with-tls \
+	       --with-__thread \
+	       --without-cvs \
+	       --without-gd || return 1
+
+  make || return 1
+}
+package() {
+  cd $srcdir/$_svnmod/eglibc-build || return 1
+  
+  install -d $pkgdir/etc/rc.d || return 1
+  touch $pkgdir/etc/ld.so.conf || return 1
+
+  make install_root=$pkgdir install || return 1
+
+  rm -f $pkgdir/etc/ld.so.* $pkgdir/etc/localtime || return 1
+
+  install -d $pkgdir/usr/lib/locale || return 1
+  install -m 755 $srcdir/nscd $pkgdir/etc/rc.d/nscd || return 1
+  install -m 755 $srcdir/locale-gen $pkgdir/usr/sbin || return 1
+
+  sed 's/^\tserver-user/#\tserver-user/' \
+      $srcdir/$_svnmod/nscd/nscd.conf > $pkgdir/etc/nscd.conf || return 1
+
+  # create /etc/locale.gen
+  sed 's|/| |g;
+       s|\\| |g;
+       s|SUPPORTED-LOCALES=||;
+       s|^|#|g' \
+      $srcdir/locale.gen.txt \
+      $srcdir/$_svnmod/localedata/SUPPORTED \
+      > $pkgdir/etc/locale.gen || return 1
+}

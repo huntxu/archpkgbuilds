@@ -1,0 +1,20 @@
+pkgname=FoxitReader
+pkgver=1.1
+pkgrel=1
+pkgdesc="A small, fast PDF viewer"
+arch=('i686' 'x86_64')
+url="http://www.foxitsoftware.com/pdf/desklinux/"
+license=('custom')
+depends=('gtk2' 'sqlite3')
+source=(http://mirrors.foxitsoftware.com/pub/foxit/reader/desktop/linux/1.x/1.1/enu/FoxitReader-1.1.0.tar.bz2)
+md5sums=('585d2fd105a221c78e89607039f17126')
+
+build() {
+  cd "$srcdir/1.1-release"
+  install -Dm755 FoxitReader "$pkgdir/opt/$pkgname/FoxitReader"
+  install -Dm644 fum.fhd "$pkgdir/opt/$pkgname/fum.fhd"
+  install -Dm644 fpdfcjk.bin "$pkgdir/opt/$pkgname/fpdfcjk.bin"
+  mkdir -p "$pkgdir/etc/profile.d"
+  echo 'export PATH=$PATH:/opt/FoxitReader' >> "$pkgdir/etc/profile.d/foxitreader.sh"
+  chmod 755 "$pkgdir/etc/profile.d/foxitreader.sh"
+}

@@ -1,0 +1,28 @@
+pkgname=awesome
+pkgver=3.4.11
+pkgrel=2
+pkgdesc="A tiling window manager initialy based on a dwm code rewriting."
+arch=('i686' 'x86_64')
+url="http://awesome.naquadah.org/"
+license=('GPL2')
+depends=('cairo' 'pango' 'imlib2' 'lua' 'libev' 'dbus' 'libxdg-basedir'
+         'startup-notification' 'xcb-util'{-image,-keysyms,-wm})
+makedepends=('gperf' 'cmake' 'imagemagick')
+source=($url/download/${pkgname}-${pkgver}.tar.xz
+        awesome-xcursor.patch)
+md5sums=('d6aa71334b5cd4ef63ce69d6c612ecf2'
+         '790df5605968462c34d2d7977bcbf7dd')
+
+build() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  patch -Np1 -i ../awesome-xcursor.patch
+
+  make CMAKE_ARGS=" -DPREFIX=/usr -DSYSCONFDIR=/etc \
+	-DCMAKE_BUILD_TYPE=RELEASE -DGENERATE_MANPAGES=OFF -DGENERATE_LUADOC=OFF"
+}
+
+package() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+
+  make DESTDIR=${pkgdir} install
+}

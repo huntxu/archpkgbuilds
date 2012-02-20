@@ -1,0 +1,31 @@
+# Contributor: zhuqin <zhuqin83[AT]gmail[DOT]com>
+pkgname=gmlive
+pkgver=0.22.1
+pkgrel=1
+pkgdesc="Live video for linux, powered by mms, sopcast, pplive & ppstream."
+arch=('i686')
+#i686 only due to non-free sopcast and/or xpplive
+url="http://code.google.com/p/gmlive/"
+license=('GPLv2')
+depends=('gtkmm' 'mplayer')
+makedepends=('pkgconfig' 'intltool')
+conflicts=('gmlive-svn' 'libpps')
+source=(http://gmlive.googlecode.com/files/$pkgname-$pkgver.tar.bz2
+  http://gmlive.googlecode.com/files/$pkgname-extra-0.2.tar.gz)
+md5sums=('f06c49eaf3dabfd8713b5ffaf99c2049' 'b65e488538f260962549dc52b9ce14ef')
+
+build() {
+  cd $srcdir/$pkgname-$pkgver
+  ./configure --prefix=/usr \
+              --disable-plugin \
+              --disable-nls \
+              --disable-static || return 1
+  make || return 1
+  make DESTDIR=$pkgdir install || return 1
+
+  cd $srcdir/$pkgname-extra*
+  install -Dm755 sp-sc-auth $pkgdir/usr/bin
+  install -Dm755 xpplive $pkgdir/usr/bin
+  install -Dmu=rwxs,go=rx xpps $pkgdir/usr/bin 
+  tar xvfz lib_pps.tar.gz -C $pkgdir/usr
+}

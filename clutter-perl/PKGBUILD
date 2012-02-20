@@ -1,0 +1,23 @@
+pkgname=clutter-perl
+pkgver=20101129
+pkgrel=1
+pkgdesc="Perl bindings for Clutter"
+arch=('i686' 'x86_64')
+url="http://clutter-project.org/"
+license=('LGPL')
+depends=('clutter')
+makedepends=('perl-extutils-depends' 'perl-extutils-pkgconfig')
+
+_gitroot="git://git.clutter-project.org/bindings/perl-Clutter.git"
+_gitname="perl-Clutter"
+
+build() {
+  cd ${srcdir}
+  git clone ${_gitroot} ${_gitname}
+  cd ${_gitname}
+
+  perl Makefile.PL PREFIX=/usr
+  make
+  make test
+  make DESTDIR=${pkgdir} install
+}

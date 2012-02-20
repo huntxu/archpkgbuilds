@@ -1,0 +1,23 @@
+pkgname=feh
+pkgver=2.3
+pkgrel=2
+pkgdesc='Fast and light imlib2-based image viewer'
+url='http://feh.finalrewind.org/'
+license=('MIT')
+arch=('i686' 'x86_64')
+depends=('giblib')
+optdepends=('perl: feh-cam, webcam wrapper for feh')
+makedepends=('libxt')
+source=("${url}${pkgname}-${pkgver}.tar.bz2")
+sha1sums=('9f42ba920baeb405777f834546223a9ff9eb43e7')
+
+build() {
+        cd "${srcdir}/${pkgname}-${pkgver}"
+        make PREFIX=/usr curl=0 xinerama=0 debug=0 help=0
+}
+
+package(){
+        cd "${srcdir}/${pkgname}-${pkgver}"
+        make PREFIX=/usr DESTDIR="${pkgdir}" install
+        install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

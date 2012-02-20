@@ -1,0 +1,44 @@
+pkgname=fcitx-git
+pkgver=20120210
+pkgrel=1
+pkgdesc="Free Chinese Input Toy of X - Input Method Server for X window system (XIM)"
+arch=("i686" "x86_64")
+license=('GPL')
+url="http://code.google.com/p/fcitx"
+depends=('pango' 'dbus-core' 'dbus-glib' 'gtk3')
+makedepends=('intltool' 'cmake')
+provides=('fcitx')
+confilcts=('fcitx')
+_gitroot=$url
+_gitname=${pkgname%%-git}
+
+build() {
+  cd $srcdir/
+
+  cp -a ${startdir}/${_gitname} .
+
+  msg "Connecting to GIT server...."
+  if [ -d $_gitname ] ; then
+      cd $_gitname && git pull origin
+      msg "The local files are updated."
+  else
+      git clone --depth=1 $_gitroot $_gitname
+  fi
+  msg "GIT checkout done or server timeout"
+
+  mkdir -p ${srcdir}/${_gitname}-build
+
+  cd ${srcdir}/${_gitname}-build
+  cmake ../${_gitname} \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DENABLE_GTK3_IM_MODULE=ON \
+      -DENABLE_OPENCC=OFF
+  make
+}
+
+package(){
+  cd ${srcdir}/${_gitname}-build
+  make DESTDIR=${pkgdir} install
+}
+

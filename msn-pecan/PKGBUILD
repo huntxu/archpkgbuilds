@@ -1,0 +1,22 @@
+pkgname=msn-pecan
+pkgver=20120206
+pkgrel=1
+pkgdesc="msn-pecan is an improved MSN plug-in for Pidgin."
+arch=('i686' 'x86_64')
+url="http://code.google.com/p/msn-pecan/"
+license=('GPL')
+makedepends=('git')
+depends=('pidgin')
+
+_gitroot="git://github.com/felipec/msn-pecan.git"
+_gitname="msn-pecan"
+
+build() {
+
+  cd ${srcdir}
+  cp -a ${startdir}/msn-pecan ./
+  cd msn-pecan
+  git pull
+  make
+  make DESTDIR="${pkgdir}" install
+}

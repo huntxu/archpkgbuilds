@@ -1,0 +1,183 @@
+pkgbase=linux-hunt
+pkgname=('linux-hunt' 'linux-headers-hunt')
+_kernelname=${pkgname#linux}
+_basekernel=3.3
+pkgver=${_basekernel}rc3
+pkgrel=3
+arch=('x86_64')
+url="http://www.kernel.org/"
+license=('GPL2')
+makedepends=('xz' 'git')
+options=('!strip')
+source=('config'
+        'patch-Makefile'
+        'change-default-console-loglevel.patch'
+        'i915-fix-ghost-tv-output.patch'
+        'i915-gpu-finish.patch')
+md5sums=('7133aec5c1d4c6ed9fc71f3926f115eb'
+         '5bf91d9736ffe7e81c0edc0d50b863cc'
+         '9d3c56a4b999c8bfbd4018089a62f662'
+         '263725f20c0b9eb9c353040792d644e5'
+         '4cd79aa147825837dc8bc9f6b736c0a0')
+
+_restore_src_dir () {
+  for i in `git status -s|grep '\bM\b'|cut -b 4-`;
+  do
+      git checkout $i;
+  done;
+  for i in `git status -s|grep '??'|cut -b 4-`;
+  do
+      rm -rf $i;
+  done;
+}
+
+build() {
+  #unset MAKEFLAGS
+  cd ${srcdir}
+  ln -sf ../linux ./
+
+  cd linux
+  _restore_src_dir
+  make mrproper
+
+  patch -Np1 -i "${srcdir}/patch-Makefile"
+
+  # add latest fixes from stable queue, if needed
+  # http://git.kernel.org/?p=linux/kernel/git/stable/stable-queue.git
+
+  # fix FS#27883
+  # drm/i915: Only clear the GPU domains upon a successful finish
+  patch -Np1 -i "${srcdir}/i915-gpu-finish.patch"
+
+  # Some chips detect a ghost TV output
+  # mailing list discussion: http://lists.freedesktop.org/archives/intel-gfx/2011-April/010371.html
+  # Arch Linux bug report: FS#19234
+  #
+  # It is unclear why this patch wasn't merged upstream, it was accepted,
+  # then dropped because the reasoning was unclear. However, it is clearly
+  # needed.
+  patch -Np1 -i "${srcdir}/i915-fix-ghost-tv-output.patch"
+
+  # set DEFAULT_CONSOLE_LOGLEVEL to 4 (same value as the 'quiet' kernel param)
+  # remove this when a Kconfig knob is made available by upstream
+  # (relevant patch sent upstream: https://lkml.org/lkml/2011/7/26/227)
+  patch -Np1 -i "${srcdir}/change-default-console-loglevel.patch"
+
+  cat "${srcdir}/config" > ./.config
+
+  # get kernel version
+  make prepare
+
+  yes "" | make config
+
+  # build!
+  make ${MAKEFLAGS} bzImage modules
+}
+
+package_linux-hunt() {
+  pkgdesc="The Linux Kernel and modules, hunt customized"
+  groups=('base')
+  depends=('coreutils' 'module-init-tools>=3.16')
+  optdepends=('crda: to set the correct wireless channels of your country')
+  #provides=('kernel26')
+  #conflicts=('kernel26')
+  #replaces=('kernel26')
+
+  cd "${srcdir}/linux"
+  KARCH=x86
+
+  # get kernel version
+  _kernver="$(make kernelrelease)"
+
+  mkdir -p "${pkgdir}"/{lib/modules,lib/firmware,boot}
+  make INSTALL_MOD_PATH="${pkgdir}" modules_install
+  cp arch/$KARCH/boot/bzImage "${pkgdir}/boot/vmlinuz-${pkgname}"
+
+  # add vmlinux
+  install -D -m644 vmlinux "${pkgdir}/usr/src/linux-${_kernver}/vmlinux"
+  # remove build and source links
+  rm -f "${pkgdir}"/lib/modules/${_kernver}/{source,build}
+  # remove the firmware
+  rm -rf "${pkgdir}/lib/firmware"
+
+  #find "${pkgdir}" -name '*.ko' -exec xz -9 {} \;
+}
+
+package_linux-headers-hunt() {
+  pkgdesc="Header files and scripts for building modules for linux-hunt"
+  provides=('kernel26-headers')
+  conflicts=('kernel26-headers')
+  replaces=('kernel26-headers')
+
+  mkdir -p "${pkgdir}/lib/modules/${_kernver}"
+
+  cd "${pkgdir}/lib/modules/${_kernver}"
+  ln -sf ../../../usr/src/linux-${_kernver} build
+
+  cd "${srcdir}/linux"
+  install -D -m644 Makefile \
+    "${pkgdir}/usr/src/linux-${_kernver}/Makefile"
+  install -D -m644 kernel/Makefile \
+    "${pkgdir}/usr/src/linux-${_kernver}/kernel/Makefile"
+  install -D -m644 .config \
+    "${pkgdir}/usr/src/linux-${_kernver}/.config"
+
+  mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/include"
+
+  for i in acpi asm-generic config crypto drm generated linux math-emu \
+    media net pcmcia scsi sound trace video xen; do
+    cp -a include/${i} "${pkgdir}/usr/src/linux-${_kernver}/include/"
+  done
+
+  # copy arch includes for external modules
+  mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/arch/x86"
+  cp -a arch/x86/include "${pkgdir}/usr/src/linux-${_kernver}/arch/x86/"
+
+  # copy files necessary for later builds, like nvidia and vmware
+  cp Module.symvers "${pkgdir}/usr/src/linux-${_kernver}"
+  cp -a scripts "${pkgdir}/usr/src/linux-${_kernver}"
+
+  # fix permissions on scripts dir
+  chmod og-w -R "${pkgdir}/usr/src/linux-${_kernver}/scripts"
+  mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/.tmp_versions"
+
+  mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/arch/${KARCH}/kernel"
+
+  cp arch/${KARCH}/Makefile "${pkgdir}/usr/src/linux-${_kernver}/arch/${KARCH}/"
+  cp arch/${KARCH}/kernel/asm-offsets.s "${pkgdir}/usr/src/linux-${_kernver}/arch/${KARCH}/kernel/"
+
+  # add inotify.h
+  mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/include/linux"
+  cp include/linux/inotify.h "${pkgdir}/usr/src/linux-${_kernver}/include/linux/"
+
+  # copy in Kconfig files
+  for i in `find . -name "Kconfig*"`; do
+    mkdir -p "${pkgdir}"/usr/src/linux-${_kernver}/`echo ${i} | sed 's|/Kconfig.*||'`
+    cp ${i} "${pkgdir}/usr/src/linux-${_kernver}/${i}"
+  done
+
+  chown -R root "${pkgdir}/usr/src/linux-${_kernver}"
+  find "${pkgdir}/usr/src/linux-${_kernver}" -type d -exec chmod 755 {} \;
+
+  # strip scripts directory
+  find "${pkgdir}/usr/src/linux-${_kernver}/scripts" -type f -perm -u+w 2>/dev/null | while read binary ; do
+    case "$(file -bi "${binary}")" in
+      *application/x-sharedlib*) # Libraries (.so)
+        /usr/bin/strip ${STRIP_SHARED} "${binary}";;
+      *application/x-archive*) # Libraries (.a)
+        /usr/bin/strip ${STRIP_STATIC} "${binary}";;
+      *application/x-executable*) # Binaries
+        /usr/bin/strip ${STRIP_BINARIES} "${binary}";;
+    esac
+  done
+
+  # remove unneeded architectures
+  rm -rf "${pkgdir}"/usr/src/linux-${_kernver}/arch/{alpha,arm,arm26,avr32,blackfin,cris,frv,h8300,ia64,m32r,m68k,m68knommu,mips,microblaze,mn10300,parisc,powerpc,ppc,s390,sh,sh64,sparc,sparc64,um,v850,xtensa}
+
+  # clean the git directory
+  cd ${srcdir}/linux
+  _restore_src_dir
+  make mrproper
+  cd ${srcdir}
+  unlink linux
+}

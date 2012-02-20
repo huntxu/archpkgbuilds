@@ -1,0 +1,19 @@
+pkgname=twf
+pkgver=0.2.1
+pkgrel=1
+pkgdesc="A showcase tool for GTK+ widgets, designed for testing new themes."
+arch=(i686 x86_64)
+url="http://www.stellingwerff.com/"
+depends=('gtk2')
+license=('GPL')
+source=(${url}/TheWidgetFactory/thewidgetfactory-${pkgver}.tar.gz)
+md5sums=('60175721233c6f265326fcdc0334c269')
+
+build() {
+  cd "${srcdir}/thewidgetfactory-${pkgver}"
+  
+  ./configure --prefix=/usr || return 1
+
+  make || return 1
+  make DESTDIR="${pkgdir}" install || return 1
+}
