@@ -12,7 +12,7 @@ while(<>) {
     $_ = `$command -Si $localrepo/$_[0]`;
     next if !$_;
     /Version[^:]+:\s+?(\S+)/s;
-    $cmp = `vercmp "$1" "$_[1]"`;
+    $cmp = `vercmp $1 $_[1]`;
     if ($cmp == 0) {
         next;
     }
