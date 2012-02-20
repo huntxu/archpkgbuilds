@@ -17,20 +17,25 @@ foreach(<VERSIONDIFF>) {
 close VERSIONDIFF;
 
 my $commit_msg;
+my $n = 0;
 foreach (keys %add) {
     if (exists $del{$_}) {
         $commit_msg .= "$_: $del{$_} -> $add{$_}\\n";
         delete $add{$_};
         delete $del{$_};
+        $n++;
     } 
 }
 foreach (keys %add) {
     $commit_msg .= "Added $_: $add{$_}\\n";
+    $n++;
 }
 foreach (keys %del) {
     $commit_msg .= "Deleted $_: $del{$_}\\n";
+    $n++;
 }
 
-unless(!$commit_msg) {
+if ($n>0) {
+    $commit_msg = "Updated $n package(s).\\n\\n$commit_msg";
     system("sed", "-i", "1i$commit_msg", $ARGV[0]);
 }

@@ -20,7 +20,7 @@ while (<GITSTATUS>) {
         update_hash_with_pkgname $1;
     }
     else {
-        last if /^?.+/;
+        last if /^\?.+/;
     }
 }
 close GITSTATUS;
