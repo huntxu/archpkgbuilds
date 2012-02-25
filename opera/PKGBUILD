@@ -1,7 +1,7 @@
 pkgname=opera
 _bigrelease=12.00
-_buildver=1306
-_randomizer=monday
+_buildver=1312
+_randomizer=torsdag
 pkgver=${_bigrelease}.${_buildver}
 pkgrel=1
 pkgdesc="A fast and secure web browser and Internet suite. Alpha version."
@@ -13,7 +13,7 @@ license=('custom:opera')
 arch=('x86_64')
 [ "$CARCH" = "x86_64" ] && _arch=x86_64
 source=(http://snapshot.opera.com/unix/${_randomizer}_${_bigrelease}-${_buildver}/opera-next-${_bigrelease}-${_buildver}.${_arch}.linux.tar.xz)
-md5sums=('e3da656c3c38f383e5b2cba28ae59eba')
+md5sums=('1b4c608650b5b388d567d6f97d91b2ed')
 
 build() {
 	${pkgname}-next-${_bigrelease}-${_buildver}.${_arch}.linux/install --prefix /usr --name ${pkgname} --repackage ${pkgdir}/usr

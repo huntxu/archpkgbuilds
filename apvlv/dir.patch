@@ -1,6 +1,6 @@
-diff -Nur apvlv-0.1.2-Source.orig/src/ApvlvUtil.cpp apvlv-0.1.2-Source/src/ApvlvUtil.cpp
---- apvlv-0.1.2-Source.orig/src/ApvlvUtil.cpp	2011-06-24 15:30:12.000000000 +0800
-+++ apvlv-0.1.2-Source/src/ApvlvUtil.cpp	2011-07-31 16:22:08.786230276 +0800
+diff -Nur apvlv-0.1.4.orig/src/ApvlvUtil.cc apvlv-0.1.4/src/ApvlvUtil.cc
+--- apvlv-0.1.4.orig/src/ApvlvUtil.cc	2012-02-18 23:38:05.000000000 +0800
++++ apvlv-0.1.4/src/ApvlvUtil.cc	2012-02-25 01:29:30.957261695 +0800
 @@ -58,8 +58,8 @@
  string iconreg = string (DOCDIR) + "/icons/reg.png";
  string icondir = string (DOCDIR) + "/icons/dir.png";
