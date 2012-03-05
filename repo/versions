@@ -1,11 +1,11 @@
 xf86-input-evdev=2.6.99.901-1
 mesa=8.0.1-1
 clutter-perl=20101129-1
-localepurge=0.6.2+nmu2-1
+localepurge=0.6.2+nmu2-3
 xchat=2.8.8-7
 libxft-lcd=2.2.0-1
 eva-svn=58-1
-xorg-server=1.11.99.902-1
+xorg-server=1.12.0-1
 nc=1.89-3
 mac=3.99u4b5-3
 libdrm=2.4.31-1
