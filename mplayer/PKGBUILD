@@ -1,5 +1,5 @@
 pkgname=mplayer
-pkgver=34654
+pkgver=34800
 pkgrel=1
 pkgdesc="A movie player for linux"
 arch=('i686' 'x86_64')
