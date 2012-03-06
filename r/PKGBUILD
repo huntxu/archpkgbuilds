@@ -1,6 +1,6 @@
 pkgname=r
 pkgver=2.14.1
-pkgrel=2
+pkgrel=4
 pkgdesc="Language and environment for statistical computing and graphics"
 arch=('i686' 'x86_64')
 license=('GPL')
@@ -16,6 +16,7 @@ sha1sums=('5803a213480a749e36bccc155aecb13070ade096')
 build() {
    cd "${srcdir}/R-${pkgver}"
    sed -i 's|#define NeedFunctionPrototypes 0|#define NeedFunctionPrototypes 1|g' src/modules/X11/dataentry.c
+   sed -i 's/_pcre_valid_utf8/_pcre_valid_utf/' src/main/util.c
    ./configure  --prefix=/usr \
 		--libdir=/usr/lib \
                 --sysconfdir=/etc/R \
