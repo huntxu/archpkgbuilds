@@ -9,7 +9,7 @@ my $cmp;
 push @ARGV, "./versions";
 while(<>) {
     @_ = split /=/;
-    $_ = `$command -Si $localrepo/$_[0]`;
+    $_ = `$command -Qi $_[0]`;
     next if !$_;
     /Version[^:]+:\s+?(\S+)/s;
     $cmp = `vercmp $1 $_[1]`;
