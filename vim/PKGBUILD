@@ -1,6 +1,6 @@
 pkgname=vim
 _topver=7.3
-_patchlevel=434
+_patchlevel=462
 pkgver=${_topver}.${_patchlevel}
 pkgrel=1
 pkgdesc='Vi Improved, a highly configurable, improved version of the vi text editor'
@@ -118,7 +118,7 @@ package() {
     # rc files
     install -Dm644 ${srcdir}/vimrc ${pkgdir}/etc/vimrc
     install -Dm644 ${srcdir}/archlinux.vim \
-        ${pkgdir}/share/vim/vimfiles/archlinux.vim
+        ${pkgdir}/usr/share/vim/vimfiles/archlinux.vim
     # rgb.txt file
     install -Dm644 ${srcdir}/vim-build/runtime/rgb.txt \
         ${pkgdir}/usr/share/vim/${_versiondir}/rgb.txt
