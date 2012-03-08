@@ -21,9 +21,6 @@ md5sums=('2ddd4d47bc52aceb3b295e68f9f32ffe'
 build() {
     cd "${srcdir}/${pkgname}-${pkgver}"
     ./configure \
-        CONF_DRIVER_MODULE_NVIDIA=nvidia \
-        CONF_LDPATH_NVIDIA=/usr/lib/nvidia-bumblebee:/usr/lib32/nvidia-bumblebee \
-        CONF_MODPATH_NVIDIA=/usr/lib/nvidia-bumblebee/xorg/,/usr/lib/xorg/modules \
         --prefix=/usr \
         --sysconfdir=/etc
     make
