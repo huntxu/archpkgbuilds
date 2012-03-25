@@ -1,14 +1,14 @@
 pkgname=mpd
 pkgver=0.16.7
-pkgrel=1
-pkgdesc="Music daemon that plays MP3, FLAC, and Ogg Vorbis files"
-arch=('i686' 'x86_64')
+pkgrel=3
+pkgdesc='Flexible, powerful, server-side application for playing music'
+url='http://mpd.wikia.com/wiki/Music_Player_Daemon_Wiki'
 license=('GPL')
-url="http://mpd.wikia.com/wiki/Server"
+arch=('i686' 'x86_64')
 depends=('sqlite3' 'libmad' 'flac' 'lame' 'libvorbis' 'libcue')
 makedepends=('pkgconfig')
 source=("http://downloads.sourceforge.net/musicpd/${pkgname}-${pkgver}.tar.bz2")
-md5sums=('3d0e7c36646e80386b32966bd4268e8d')
+sha1sums=('878f3ce82d4f00f6cbad63a625b2c0274c4a704a')
 
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}

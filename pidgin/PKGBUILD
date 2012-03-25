@@ -1,6 +1,6 @@
 pkgname=pidgin
-pkgver=2.10.1
-pkgrel=1
+pkgver=2.10.2
+pkgrel=2
 arch=('i686' 'x86_64')
 url="http://pidgin.im/"
 license=('GPL')
@@ -11,7 +11,7 @@ optdepends=('avahi: Bonjour protocol support'
             'ca-certificates: SSL CA certificates')
 install=pidgin.install
 source=(http://downloads.sourceforge.net/$pkgname/$pkgname-$pkgver.tar.bz2)
-sha256sums=('2f28bddc5edcd714d607d74126c8958ae7c258602b3929e3e6e783d3cb1beac8')
+sha256sums=('e5cdd29056d36677cb81225c3b36b1bcde64605e201492f6e2fdf27ff24d32b8')
 
 build() {
   cd "$srcdir/$pkgname-$pkgver"
@@ -19,8 +19,6 @@ build() {
   # Use Python 2
   sed -i 's/env python$/&2/' */plugins/*.py \
     libpurple/purple-{remote,notifications-example,url-handler}
-  sed -i -r 's/(pidgin_LDFLAGS =)/\1 -lm/' pidgin/Makefile.am
-  autoreconf
   ./configure \
     --prefix=/usr \
     --sysconfdir=/etc \

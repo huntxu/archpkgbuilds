@@ -1,6 +1,6 @@
 pkgname=gimp-devel
-pkgver=2.7.4
-pkgrel=2
+pkgver=2.7.5
+pkgrel=1
 pkgdesc="GNU Image Manipulation Program (Development Version)"
 arch=('i686' 'x86_64')
 url="http://www.gimp.org/"
@@ -18,7 +18,7 @@ conflicts=('gimp')
 provides=("gimp=${pkgver}")
 install=gimp-devel.install
 source=(ftp://ftp.gimp.org/pub/gimp/v${pkgver%.*}/gimp-${pkgver}.tar.bz2 linux.gpl)
-md5sums=('bda95a29c3483b8ff458b06b1543f867'
+md5sums=('55c3ce1402890665464d9aad74ea63b6'
          'bb27bc214261d36484093e857f015f38')
 
 build() {
