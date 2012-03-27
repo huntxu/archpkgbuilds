@@ -9,7 +9,7 @@ if [ "${_git}" = "true" ]; then
     pkgver=7.10.99.git20110709
     #pkgver=7.11
   else
-    pkgver=8.0.1
+    pkgver=8.0.2
 fi
 pkgrel=1
 arch=('i686' 'x86_64')
@@ -26,10 +26,11 @@ if [ "${_git}" = "true" ]; then
 	source=(${source[@]} "ftp://ftp.freedesktop.org/pub/mesa/${pkgver}/MesaLib-${pkgver}.tar.bz2"
 )
 fi
-md5sums=('24eeebf66971809d8f40775a379b36c9')
+md5sums=('a368104e5700707048dc3e8691a9a7a1')
 
 build() {
     cd ${srcdir}/?esa-*
+    export CFLAGS=`echo $CFLAGS|sed -r 's/\-flto//'`
 
 if [ "${_git}" = "true" ]; then
     autoreconf -vfi
@@ -47,6 +48,7 @@ if [ "${_git}" = "true" ]; then
     --enable-gles2 \
     --enable-egl \
     --enable-texture-float \
+    --enable-xa \
     --enable-shared-dricore
   else
     autoreconf -vfi
@@ -64,6 +66,7 @@ if [ "${_git}" = "true" ]; then
     --enable-gles2 \
     --enable-egl \
     --enable-texture-float \
+    --enable-xa \
     --enable-shared-dricore
 fi
 
@@ -167,7 +170,8 @@ package_mesa() {
   rm -f "${pkgdir}/usr/lib/libGLESv"*
   rm -f "${pkgdir}/usr/lib/libEGL"*
   rm -rf "${pkgdir}/usr/lib/egl"
-  rm -f ${pkgdir}/usr/lib/pkgconfig/{glesv1_cm.pc,glesv2.pc,egl.pc}
+  rm -f "${pkgdir}/usr/lib/libOSMesa"*
+  rm -f ${pkgdir}/usr/lib/pkgconfig/{glesv1_cm.pc,glesv2.pc,egl.pc,osmesa.pc}
   rm -rf "${pkgdir}/usr/lib/xorg"
   rm -f "${pkgdir}/usr/include/GL/glew.h"
   rm -f "${pkgdir}/usr/include/GL/glxew.h"
