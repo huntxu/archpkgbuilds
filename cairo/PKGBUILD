@@ -1,6 +1,6 @@
 pkgname=cairo
-pkgver=1.12.0
-pkgrel=4
+pkgver=1.12.2
+pkgrel=1
 pkgdesc="Cairo vector graphics library"
 arch=(i686 x86_64)
 license=('LGPL' 'MPL')
@@ -11,18 +11,15 @@ optdepends=('xcb-util: for XCB backend') # really needed?
 provides=('cairo-xcb')
 replaces=('cairo-xcb')
 options=('!libtool')
-source=(http://cairographics.org/releases/$pkgname-$pkgver.tar.gz
-        cairo-1.10.0-buggy_gradients.patch
-        git_fixes.patch)
-md5sums=('e6c85575ba7094f88b637bdfd835a751'
-         '9b323790dab003e228c6955633cb888e'
-         'ce32ba4639d910bce7159c9a67ff2355')
+source=(http://cairographics.org/releases/$pkgname-$pkgver.tar.xz
+        cairo-1.10.0-buggy_gradients.patch)
+md5sums=('87649eb75789739d517c743e94879e51'
+         '9b323790dab003e228c6955633cb888e')
 
 build() {
   cd "$srcdir/$pkgname-$pkgver"
-  patch -Np1 -i "${srcdir}/cairo-1.10.0-buggy_gradients.patch"
+  patch -Np1 -i ${srcdir}/cairo-1.10.0-buggy_gradients.patch
 
-  patch -Np1 -i ${srcdir}/git_fixes.patch
   autoreconf -vfi
   export CFLAGS=`echo $CFLAGS|sed -r 's/\-flto//'`
   ./configure --prefix=/usr \

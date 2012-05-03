@@ -1,6 +1,6 @@
 pkgname=xchat
 pkgver=2.8.8
-pkgrel=7
+pkgrel=9
 pkgdesc="A GTK+ based IRC client"
 arch=('i686' 'x86_64')
 url="http://www.xchat.org/"
@@ -9,21 +9,24 @@ depends=('gtk2' 'openssl' 'dbus-glib' 'perl' 'libnotify')
 optdepends=('enchant: for spell checking support' 'tcl: for tcl plugin'
             'python2: for python plugin')
 options=('!libtool')
-source=(http://www.xchat.org/files/source/${pkgver%.*}/${pkgname}-${pkgver}.tar.bz2
+source=(http://www.xchat.org/files/source/${pkgver%.*}/${pkgname}-${pkgver}.tar.xz
         xchat-2.8.8-libnotify07.patch
-        xchat-2.8.8-link-against-libnotify.patch)
-md5sums=('6775c44f38e84d06c06c336b32c4a452'
-         '83359a807fa4f7faee90297576fb17a7'
-         'dc30fd1203a93b19d47734ba55713b7a')
+        xchat-2.8.8-link-against-libnotify.patch
+        xchat-2.8.8-glib-2.31.patch)
+sha1sums=('e12305da42d1aacc26c2ca25e239f393d4dd3532'
+          'a053fba4e1911d1ee6a8248fe19e344797920fe3'
+          '70c3cc29fc55ff35f701ef8ac23078b6e3761ce1'
+          'aecaf6176a7cfd62555207b02f2793b360aa39da')
 
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"
-  patch -Np1 -i ${srcdir}/xchat-2.8.8-libnotify07.patch
-  patch -Np1 -i ${srcdir}/xchat-2.8.8-link-against-libnotify.patch
+  patch -p1 -i "${srcdir}/xchat-2.8.8-libnotify07.patch"
+  patch -p1 -i "${srcdir}/xchat-2.8.8-link-against-libnotify.patch"
+  patch -p1 -i "${srcdir}/xchat-2.8.8-glib-2.31.patch"
   autoconf
   autoheader
 
-  ./configure --prefix=/usr \
+  LIBS+="-lgmodule-2.0" ./configure --prefix=/usr \
       --sysconfdir=/etc \
       --disable-nls \
       --enable-threads=posix \
