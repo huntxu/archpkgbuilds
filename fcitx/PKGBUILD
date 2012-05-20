@@ -1,5 +1,5 @@
 pkgname=fcitx-git
-pkgver=20120422
+pkgver=20120511
 pkgrel=1
 pkgdesc="Free Chinese Input Toy of X - Input Method Server for X window system (XIM)"
 arch=("i686" "x86_64")
