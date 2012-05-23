@@ -1,5 +1,5 @@
 xf86-input-evdev=2.7.0-2
-mesa=8.0.2-1
+mesa=8.0.3-1
 clutter-perl=20101129-1
 localepurge=0.6.2+nmu2-3
 xchat=2.8.8-9

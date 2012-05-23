@@ -1,5 +1,5 @@
 pkgbase=mesa
-pkgname=('mesa' 'libgl' 'osmesa' 'libglapi' 'libgles' 'libegl' 'khrplatform-devel' 'intel-dri')
+pkgname=('mesa' 'libgl' 'osmesa' 'libglapi' 'libgbm' 'libgles' 'libegl' 'khrplatform-devel' 'intel-dri')
 
 #_git=true
 _gitdate=20111031
@@ -9,7 +9,7 @@ if [ "${_git}" = "true" ]; then
     pkgver=7.10.99.git20110709
     #pkgver=7.11
   else
-    pkgver=8.0.2
+    pkgver=8.0.3
 fi
 pkgrel=1
 arch=('i686' 'x86_64')
@@ -17,7 +17,7 @@ makedepends=('glproto>=1.4.15' 'libdrm>=2.4.30' 'libxxf86vm>=1.1.1' 'libxdamage>
              'gcc-libs>=4.6.1' 'dri2proto>=2.6' 'python2' 'libxml2' 'imake' 'llvm' 'udev' 'flex' 'bison' 'pkgconfig')
 url="http://mesa3d.sourceforge.net"
 license=('custom')
-source=()
+source=(mesa-8.0.3-llvm-3.1-fixes.patch)
 if [ "${_git}" = "true" ]; then
 	# mesa git shot from 7.11 branch - see for state: http://cgit.freedesktop.org/mesa/mesa/commit/?id=608a4a17feea9fba2812d4e5c01dd6dbadc5d6e0
 	#source=(${source[@]} 'ftp://ftp.archlinux.org/other/mesa/mesa-1ae00c5960af83bea9545a18a1754bad83d5cbd0.tar.bz2')
@@ -26,11 +26,13 @@ if [ "${_git}" = "true" ]; then
 	source=(${source[@]} "ftp://ftp.freedesktop.org/pub/mesa/${pkgver}/MesaLib-${pkgver}.tar.bz2"
 )
 fi
-md5sums=('a368104e5700707048dc3e8691a9a7a1')
+md5sums=('c452ed3392468170726c004c2f4e02ca'
+         'cc5ee15e306b8c15da6a478923797171')
 
 build() {
     cd ${srcdir}/?esa-*
     export CFLAGS=`echo $CFLAGS|sed -r 's/\-flto//'`
+    patch -Np1 -i "${srcdir}/mesa-8.0.3-llvm-3.1-fixes.patch"
 
 if [ "${_git}" = "true" ]; then
     autoreconf -vfi
@@ -39,7 +41,9 @@ if [ "${_git}" = "true" ]; then
     --with-gallium-drivers=swrast,i915 \
     --with-dri-drivers=swrast,i965 \
     --enable-gallium-llvm \
-    --enable-gallium-egl --enable-shared-glapi\
+   --enable-gallium-egl \
+    --enable-shared-glapi \
+    --enable-gbm \
     --enable-glx-tls \
     --enable-dri \
     --enable-glx \
@@ -57,7 +61,9 @@ if [ "${_git}" = "true" ]; then
     --with-gallium-drivers=swrast,i915 \
     --with-dri-drivers=swrast,i965 \
     --enable-gallium-llvm \
-    --enable-gallium-egl --enable-shared-glapi\
+    --enable-gallium-egl \
+    --enable-shared-glapi \
+    --enable-gbm \
     --enable-glx-tls \
     --enable-dri \
     --enable-glx \
@@ -76,7 +82,7 @@ fi
 package_libgl() {
   depends=('libdrm>=2.4.31' 'libxxf86vm>=1.1.1' 'libxdamage>=1.1.3' 'expat>=2.0.1' 'libglapi' 'gcc-libs')
   pkgdesc="Mesa 3-D graphics library and DRI software rasterizer"
-  replaces=('unichrome-dri' 'mach64-dri' 'mga-dri' 'r128-dri' 'savage-dri' 'sis-dri' 'tdfx-dri')
+  #replaces=('unichrome-dri' 'mach64-dri' 'mga-dri' 'r128-dri' 'savage-dri' 'sis-dri' 'tdfx-dri')
 
   cd ${srcdir}/?esa-*
   install -m755 -d "${pkgdir}/usr/lib"
@@ -107,6 +113,17 @@ package_libglapi() {
   cd ${srcdir}/?esa-*   
   install -m755 -d "${pkgdir}/usr/lib"
   bin/minstall lib/libglapi.so* "${pkgdir}/usr/lib/"
+}
+
+package_libgbm() {
+  depends=('glibc')
+  pkgdesc="Mesa gbm library"
+
+  cd ${srcdir}/?esa-*   
+  install -m755 -d "${pkgdir}/usr/lib"
+  bin/minstall lib/libgbm.so* "${pkgdir}/usr/lib/"
+  install -m755 -d "${pkgdir}/usr/lib/pkgconfig"
+  bin/minstall src/gbm/main/gbm.pc "${pkgdir}/usr/lib/pkgconfig/"
 }
 
 package_libgles() {
@@ -167,11 +184,12 @@ package_mesa() {
 
   rm -f "${pkgdir}/usr/lib/libGL.so"*
   rm -f "${pkgdir}/usr/lib/libglapi.so"*
+  rm -f "${pkgdir}/usr/lib/libgbm.so"*
   rm -f "${pkgdir}/usr/lib/libGLESv"*
   rm -f "${pkgdir}/usr/lib/libEGL"*
   rm -rf "${pkgdir}/usr/lib/egl"
   rm -f "${pkgdir}/usr/lib/libOSMesa"*
-  rm -f ${pkgdir}/usr/lib/pkgconfig/{glesv1_cm.pc,glesv2.pc,egl.pc,osmesa.pc}
+  rm -f ${pkgdir}/usr/lib/pkgconfig/{glesv1_cm.pc,glesv2.pc,egl.pc,osmesa.pc,gbm.pc}
   rm -rf "${pkgdir}/usr/lib/xorg"
   rm -f "${pkgdir}/usr/include/GL/glew.h"
   rm -f "${pkgdir}/usr/include/GL/glxew.h"
