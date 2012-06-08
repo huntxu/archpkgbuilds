@@ -1,7 +1,7 @@
 pkgname=opera
 _bigrelease=12.00
-_buildver=1440
-_randomizer=bonkers
+_buildver=1448
+_randomizer=rc1
 pkgver=${_bigrelease}.${_buildver}
 pkgrel=1
 pkgdesc="A fast and secure web browser and Internet suite. Alpha version."
@@ -12,11 +12,11 @@ options=(!strip !zipman)
 license=('custom:opera')
 arch=('x86_64')
 [ "$CARCH" = "x86_64" ] && _arch=x86_64
-source=(http://snapshot.opera.com/unix/${_randomizer}_${_bigrelease}-${_buildver}/opera-next-${_bigrelease}-${_buildver}.${_arch}.linux.tar.xz)
-md5sums=('426e8e88f02540c62d4e0abd880d2997')
+source=(http://snapshot.opera.com/unix/${_randomizer}_${_bigrelease}-${_buildver}/opera-${_bigrelease}-${_buildver}.${_arch}.linux.tar.xz)
+md5sums=('54493462c73c65ce96ef1256f774113e')
 
 build() {
-	${pkgname}-next-${_bigrelease}-${_buildver}.${_arch}.linux/install --prefix /usr --name ${pkgname} --repackage ${pkgdir}/usr
+	${pkgname}-${_bigrelease}-${_buildver}.${_arch}.linux/install --prefix /usr --name ${pkgname} --repackage ${pkgdir}/usr
         sed -r 's/(exec)/export GTK2_RC_FILES\=\/home\/hunt\/\.config\/gtk\-2.0\/gtkrc\-2.0\-Hunt\n\1/' -i ${pkgdir}/usr/bin/opera
 	install -D -m 644 ${pkgdir}/usr/share/${pkgname}/defaults/license.txt ${pkgdir}/usr/share/licenses/${pkgname}/license.txt
 }
