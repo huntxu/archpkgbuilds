@@ -1,6 +1,6 @@
 pkgname=cairo
 pkgver=1.12.2
-pkgrel=1
+pkgrel=2
 pkgdesc="Cairo vector graphics library"
 arch=(i686 x86_64)
 license=('LGPL' 'MPL')
@@ -12,14 +12,19 @@ provides=('cairo-xcb')
 replaces=('cairo-xcb')
 options=('!libtool')
 source=(http://cairographics.org/releases/$pkgname-$pkgver.tar.xz
-        cairo-1.10.0-buggy_gradients.patch)
+        cairo-1.10.0-buggy_gradients.patch
+        cairo-1.12.2-reduce-broken-stopped-edge-continuation.patch)
 md5sums=('87649eb75789739d517c743e94879e51'
-         '9b323790dab003e228c6955633cb888e')
+         '9b323790dab003e228c6955633cb888e'
+         '75ec73746cfaefcbed0e9b2a9f76bf00')
 
 build() {
   cd "$srcdir/$pkgname-$pkgver"
   patch -Np1 -i ${srcdir}/cairo-1.10.0-buggy_gradients.patch
-
+  # https://bugs.freedesktop.org/show_bug.cgi?id=50852
+  patch -Np1 -i ${srcdir}/cairo-1.12.2-reduce-broken-stopped-edge-continuation.patch
+  # status is 2012-04-26 last commit: image: Fix typo in _blit_spans()
+  #patch -Np1 -i ${srcdir}/git_fixes.patch
   autoreconf -vfi
   export CFLAGS=`echo $CFLAGS|sed -r 's/\-flto//'`
   ./configure --prefix=/usr \

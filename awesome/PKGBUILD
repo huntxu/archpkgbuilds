@@ -1,6 +1,6 @@
 pkgname=awesome
-pkgver=3.4.11
-pkgrel=5
+pkgver=3.4.12
+pkgrel=1
 pkgdesc='Highly configurable framework window manager'
 arch=('i686' 'x86_64')
 url='http://awesome.naquadah.org/'
@@ -17,19 +17,22 @@ depends=(
   'xcb-util-image'
   'xcb-util-keysyms'
   'xcb-util-wm'
-  'xorg-xmessage')
-makedepends=('gperf' 'cmake' 'imagemagick')
-source=("$url/download/${pkgname}-${pkgver}.tar.xz"
-        "01-fix_glib2_build.patch"
+  'xorg-xmessage'
+)
+makedepends=(
+  'cmake'
+  'gperf'
+  'imagemagick'
+)
+provides=('notification-daemon')
+source=("$url/download/$pkgname-$pkgver.tar.xz"
         "awesome-xcursor.patch")
-md5sums=('d6aa71334b5cd4ef63ce69d6c612ecf2'
-         'baa179074c36e26ef156ebb2060bfd5c'
-         '790df5605968462c34d2d7977bcbf7dd')
+md5sums=('2c3490b820a19c044290027e6f2eb6c8'
+         '9132ff6842484e1a46eb37f4e23cff1c')
 
 build() {
   cd $pkgname-$pkgver
   patch -Np1 -i ../awesome-xcursor.patch
-  patch -N -p1 -i ../01-fix_glib2_build.patch
 
   make CMAKE_ARGS=" -DPREFIX=/usr -DSYSCONFDIR=/etc \
 	-DCMAKE_BUILD_TYPE=RELEASE -DGENERATE_MANPAGES=OFF -DGENERATE_LUADOC=OFF"
@@ -37,6 +40,5 @@ build() {
 
 package() {
   cd $pkgname-$pkgver
-
   make DESTDIR="$pkgdir" install
 }

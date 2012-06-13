@@ -204,7 +204,7 @@ diff -Nur awesome-3.4.10.orig/window.c awesome-3.4.10/window.c
 -                                 (const uint32_t[]) { c });
 -}
 -
- // vim: filetype=c:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:encoding=utf-8:textwidth=80
+ // vim: filetype=c:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:textwidth=80
 diff -Nur awesome-3.4.10.orig/window.h awesome-3.4.10/window.h
 --- awesome-3.4.10.orig/window.h	2011-05-16 22:35:17.000000000 +0800
 +++ awesome-3.4.10/window.h	2011-07-31 21:03:31.602451189 +0800
