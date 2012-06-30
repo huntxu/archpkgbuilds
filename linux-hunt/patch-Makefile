@@ -1,32 +1,19 @@
 diff --git a/Makefile b/Makefile
-index 361e4f0..451492c 100644
+index b771af5..6ae73fd 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -243,10 +243,10 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
- 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
- 	  else echo sh; fi ; fi)
+@@ -241,8 +241,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
  
--HOSTCC       = gcc
--HOSTCXX      = g++
+ HOSTCC       = gcc
+ HOSTCXX      = g++
 -HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
 -HOSTCXXFLAGS = -O2
-+HOSTCC       = ccache gcc
-+HOSTCXX      = ccache g++
-+HOSTCFLAGS   = -march=native -pipe -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
-+HOSTCXXFLAGS = -march=native -O2
++HOSTCFLAGS   = -march=native -pipe -Ofast -fomit-frame-pointer -ffast-math -flto -Wall -Wmissing-prototypes -Wstrict-prototypes
++HOSTCXXFLAGS = -march=native -pipe -Ofast -fomit-frame-pointer -ffast-math -flto
  
  # Decide whether to build built-in, modular, or both.
  # Normally, just do built-in.
-@@ -330,7 +330,7 @@ include $(srctree)/scripts/Kbuild.include
- 
- AS		= $(CROSS_COMPILE)as
- LD		= $(CROSS_COMPILE)ld
--CC		= $(CROSS_COMPILE)gcc
-+CC		= ccache $(CROSS_COMPILE)gcc
- CPP		= $(CC) -E
- AR		= $(CROSS_COMPILE)ar
- NM		= $(CROSS_COMPILE)nm
-@@ -347,10 +347,10 @@ CHECK		= sparse
+@@ -342,10 +342,10 @@ CHECK		= sparse
  
  CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
  		  -Wbitwise -Wno-return-void $(CF)
@@ -40,7 +27,7 @@ index 361e4f0..451492c 100644
  AFLAGS_KERNEL	=
  CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
  
-@@ -368,7 +368,8 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+@@ -363,7 +363,8 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
  		   -fno-strict-aliasing -fno-common \
  		   -Werror-implicit-function-declaration \
  		   -Wno-format-security \

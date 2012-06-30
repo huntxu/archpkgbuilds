@@ -1,9 +1,9 @@
 pkgbase=linux-hunt
 pkgname=('linux-hunt' 'linux-headers-hunt')
 _kernelname=${pkgname#linux}
-_basekernel=3.3
-pkgver=${_basekernel}rc3
-pkgrel=3
+_basekernel=3.5
+pkgver=${_basekernel}rc4
+pkgrel=1
 arch=('x86_64')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -11,14 +11,10 @@ makedepends=('xz' 'git')
 options=('!strip')
 source=('config'
         'patch-Makefile'
+        'fix-acerhdf-1810T-bios.patch'
         'change-default-console-loglevel.patch'
         'i915-fix-ghost-tv-output.patch'
-        'i915-gpu-finish.patch')
-md5sums=('7133aec5c1d4c6ed9fc71f3926f115eb'
-         '5bf91d9736ffe7e81c0edc0d50b863cc'
-         '9d3c56a4b999c8bfbd4018089a62f662'
-         '263725f20c0b9eb9c353040792d644e5'
-         '4cd79aa147825837dc8bc9f6b736c0a0')
+        'i915-fix-rc6-in-sysfs-dependency.patch')
 
 _restore_src_dir () {
   for i in `git status -s|grep '\bM\b'|cut -b 4-`;
@@ -45,10 +41,6 @@ build() {
   # add latest fixes from stable queue, if needed
   # http://git.kernel.org/?p=linux/kernel/git/stable/stable-queue.git
 
-  # fix FS#27883
-  # drm/i915: Only clear the GPU domains upon a successful finish
-  patch -Np1 -i "${srcdir}/i915-gpu-finish.patch"
-
   # Some chips detect a ghost TV output
   # mailing list discussion: http://lists.freedesktop.org/archives/intel-gfx/2011-April/010371.html
   # Arch Linux bug report: FS#19234
@@ -58,10 +50,17 @@ build() {
   # needed.
   patch -Np1 -i "${srcdir}/i915-fix-ghost-tv-output.patch"
 
+  # Patch submitted upstream, waiting for inclusion:
+  # https://lkml.org/lkml/2012/2/19/51
+  # add support for latest bios of Acer 1810T acerhdf module
+  patch -Np1 -i "${srcdir}/fix-acerhdf-1810T-bios.patch"
+
   # set DEFAULT_CONSOLE_LOGLEVEL to 4 (same value as the 'quiet' kernel param)
   # remove this when a Kconfig knob is made available by upstream
   # (relevant patch sent upstream: https://lkml.org/lkml/2011/7/26/227)
   patch -Np1 -i "${srcdir}/change-default-console-loglevel.patch"
+
+  patch -Np1 -i "${srcdir}/i915-fix-rc6-in-sysfs-dependency.patch"
 
   cat "${srcdir}/config" > ./.config
 
@@ -172,7 +171,7 @@ package_linux-headers-hunt() {
   done
 
   # remove unneeded architectures
-  rm -rf "${pkgdir}"/usr/src/linux-${_kernver}/arch/{alpha,arm,arm26,avr32,blackfin,cris,frv,h8300,ia64,m32r,m68k,m68knommu,mips,microblaze,mn10300,parisc,powerpc,ppc,s390,sh,sh64,sparc,sparc64,um,v850,xtensa}
+  rm -rf "${pkgdir}"/usr/src/linux-${_kernver}/arch/{alpha,arm,arm26,avr32,blackfin,c6x,cris,frv,h8300,hexagon,ia64,m32r,m68k,m68knommu,mips,microblaze,mn10300,openrisc,parisc,powerpc,ppc,s390,score,sh,sh64,sparc,sparc64,tile,unicore32,um,v850,xtensa}
 
   # clean the git directory
   cd ${srcdir}/linux
@@ -181,3 +180,9 @@ package_linux-headers-hunt() {
   cd ${srcdir}
   unlink linux
 }
+md5sums=('413e8b3b1bef2cf6a5bef45ae4af3083'
+         'ce1d2b5a9975cce8427b9ed13520b7fe'
+         '38c1fd4a1f303f1f6c38e7f082727e2f'
+         '9d3c56a4b999c8bfbd4018089a62f662'
+         '263725f20c0b9eb9c353040792d644e5'
+         'ae7b3bf3f02217d0c9066fb1a819caeb')
