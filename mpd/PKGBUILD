@@ -1,6 +1,6 @@
 pkgname=mpd
-pkgver=0.16.8
-pkgrel=3
+pkgver=0.17
+pkgrel=2
 pkgdesc='Flexible, powerful, server-side application for playing music'
 url='http://mpd.wikia.com/wiki/Music_Player_Daemon_Wiki'
 license=('GPL')
@@ -8,7 +8,7 @@ arch=('i686' 'x86_64')
 depends=('sqlite3' 'libmad' 'flac' 'lame' 'libvorbis' 'libcue')
 makedepends=('pkgconfig')
 source=("http://downloads.sourceforge.net/musicpd/${pkgname}-${pkgver}.tar.bz2")
-sha1sums=('977c80db8dc64e65c2bc523f69a9a7a71adca2b1')
+sha1sums=('36201f32ca5729b62b0e6cbddb19ade20ee3f7d7')
 
 build() {
   cd ${srcdir}/${pkgname}-${pkgver}

@@ -2,7 +2,7 @@ pkgbase=linux-hunt
 pkgname=('linux-hunt' 'linux-headers-hunt')
 _kernelname=${pkgname#linux}
 _basekernel=3.5
-pkgver=${_basekernel}rc4
+pkgver=${_basekernel}rc5
 pkgrel=1
 arch=('x86_64')
 url="http://www.kernel.org/"
@@ -63,6 +63,8 @@ build() {
   patch -Np1 -i "${srcdir}/i915-fix-rc6-in-sysfs-dependency.patch"
 
   cat "${srcdir}/config" > ./.config
+  # don't run depmod on 'make install'. We'll do this ourselves in packaging
+  sed -i '2iexit 0' scripts/depmod.sh
 
   # get kernel version
   make prepare
@@ -100,6 +102,11 @@ package_linux-hunt() {
   rm -rf "${pkgdir}/lib/firmware"
 
   #find "${pkgdir}" -name '*.ko' -exec xz -9 {} \;
+
+  #move module tree /lib -> /usr/lib
+  mv "$pkgdir/lib" "$pkgdir/usr"
+  # Now we call depmod...
+  depmod -b "$pkgdir" -F System.map "$_kernver"
 }
 
 package_linux-headers-hunt() {
@@ -108,10 +115,10 @@ package_linux-headers-hunt() {
   conflicts=('kernel26-headers')
   replaces=('kernel26-headers')
 
-  mkdir -p "${pkgdir}/lib/modules/${_kernver}"
+  install -dm755 "${pkgdir}/usr/lib/modules/${_kernver}"
 
-  cd "${pkgdir}/lib/modules/${_kernver}"
-  ln -sf ../../../usr/src/linux-${_kernver} build
+  cd "${pkgdir}/usr/lib/modules/${_kernver}"
+  ln -sf ../../../src/linux-${_kernver} build
 
   cd "${srcdir}/linux"
   install -D -m644 Makefile \
@@ -180,7 +187,7 @@ package_linux-headers-hunt() {
   cd ${srcdir}
   unlink linux
 }
-md5sums=('413e8b3b1bef2cf6a5bef45ae4af3083'
+md5sums=('3c0d954ffbc23ab02483c5ec4c98bb4c'
          'ce1d2b5a9975cce8427b9ed13520b7fe'
          '38c1fd4a1f303f1f6c38e7f082727e2f'
          '9d3c56a4b999c8bfbd4018089a62f662'
