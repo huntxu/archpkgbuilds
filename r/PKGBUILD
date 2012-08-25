@@ -1,6 +1,6 @@
 pkgname=r
-pkgver=2.15.0
-pkgrel=1
+pkgver=2.15.1
+pkgrel=2
 pkgdesc="Language and environment for statistical computing and graphics"
 arch=('i686' 'x86_64')
 license=('GPL')
@@ -9,13 +9,24 @@ depends=('blas' 'lapack' 'bzip2'  'libpng' 'libjpeg' 'libtiff'
          'ncurses' 'pcre' 'readline' 'zlib' 'perl' 'gcc-libs'
          'libxt' 'libxmu' 'pango' 'xz')
 makedepends=('openjdk6' 'gcc-fortran')
+backup=('etc/R/Makeconf' 'etc/R/Renviron' 'etc/R/ldpaths' 'etc/R/repositories')
 options=('!makeflags')
-source=("http://cran.r-project.org/src/base/R-2/R-${pkgver}.tar.gz")
-sha1sums=('a633f87fdbd22e8c371971c535ca815e63c297f6')
+source=("http://cran.r-project.org/src/base/R-2/R-${pkgver}.tar.gz"
+	'R.conf')
+sha1sums=('f0e6912be6dfc0d1fdc4be66048304d8befe8424'
+          '43668da6cfd1b4455a99f23e79e2059294dddac9')
 
 build() {
-   cd "${srcdir}/R-${pkgver}"
-   sed -i 's|#define NeedFunctionPrototypes 0|#define NeedFunctionPrototypes 1|g' src/modules/X11/dataentry.c
+  cd "${srcdir}/R-${pkgver}"
+  sed -i 's|#define NeedFunctionPrototypes 0|#define NeedFunctionPrototypes 1|g' src/modules/X11/dataentry.c
+
+  # set texmf dir correctly in makefile
+  sed -i 's|$(rsharedir)/texmf|${datarootdir}/texmf|' share/Makefile.in
+
+  export CFLAGS=`echo $CFLAGS|sed -r 's/\-ffast-math \-flto//'`
+  export CXXFLAGS=`echo $CXXFLAGS|sed -r 's/\-ffast\-math \-flto//'`
+  export CFLAGS=`echo $CFLAGS|sed -r 's/Ofast/O2/'`
+  export CXXFLAGS=`echo $CXXFLAGS|sed -r 's/Ofast/O2/'`
    ./configure  --prefix=/usr \
 		--libdir=/usr/lib \
                 --sysconfdir=/etc/R \
@@ -23,8 +34,8 @@ build() {
 		  rsharedir=/usr/share/R/ \
 		  rincludedir=/usr/include/R/ \
 		  rdocdir=/usr/share/doc/R/ \
-                --with-gnu-ld \
 		--enable-R-shlib \
+                --enable-lto \
                 --disable-largefile \
                 --disable-nls \
                 --with-blas \
@@ -61,4 +72,7 @@ package() {
     mv -f ${i} "${pkgdir}/etc/R"
     ln -s /etc/R/${i} ${i}
   done
+
+  # Install ld.so.conf.d file to ensure other applications access the shared lib
+  install -Dm644 ${srcdir}/R.conf ${pkgdir}/etc/ld.so.conf.d/R.conf
 }

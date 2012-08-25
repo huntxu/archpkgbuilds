@@ -1,5 +1,5 @@
 pkgname=mldonkey
-pkgver=3.1.1
+pkgver=3.1.3
 pkgrel=1
 pkgdesc="A multi-network P2P client"
 arch=('i686' 'x86_64')
@@ -8,7 +8,7 @@ license=('GPL')
 depends=('file')
 makedepends=('ocaml')
 source=(http://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.bz2)
-md5sums=('5954ee7cfae18afb2732549fd990e7d6')
+md5sums=('671f60467a918a9b7c2affef63ff5c25')
 
 build() {
   cd "$pkgname-$pkgver"

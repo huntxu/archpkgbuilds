@@ -1,20 +1,20 @@
 pkgbase=xorg-server
 pkgname=('xorg-server' 'xorg-server-xephyr' 'xorg-server-common' 'xorg-server-devel')
-pkgver=1.12.2
+pkgver=1.12.3.901
 pkgrel=1
 arch=('i686' 'x86_64')
 license=('custom')
 url="http://xorg.freedesktop.org"
 makedepends=('pixman' 'libx11' 'mesa' 'libgl' 'xf86driproto' 'xcmiscproto' 'xtrans' 'bigreqsproto' 'randrproto' 'inputproto' 'fontsproto' 'videoproto'
-             'compositeproto' 'recordproto' 'scrnsaverproto' 'resourceproto' 'libxkbfile' 'libxfont' 'renderproto' 'libpciaccess'
+             'compositeproto' 'recordproto' 'scrnsaverproto' 'resourceproto' 'xineramaproto' 'libxkbfile' 'libxfont' 'renderproto' 'libpciaccess'
              'libxv' 'xf86dgaproto' 'libxmu' 'libxrender' 'libxi' 'dmxproto' 'libxaw' 'libdmx' 'libxtst' 'libxres' 'xorg-xkbcomp' 'xorg-util-macros'
-             'xorg-font-util' 'glproto' 'dri2proto' 'udev' 'libgcrypt')
+             'xorg-font-util' 'glproto' 'dri2proto' 'udev>=183' 'libgcrypt')
 options=('!libtool')
 source=(${url}/releases/individual/xserver/${pkgbase}-${pkgver}.tar.bz2
         autoconfig-nvidia.patch
         autoconfig-sis.patch
         10-quirks.conf)
-sha256sums=('ca9f9e22f432f1ccbf8e7a21e746e02be4081a0f3975eb7cff276483193cc5f5'
+sha256sums=('5265cfe935e2ad54a287dd3026917c6bfe6191a4f943ca893d1477fdfbe94b2b'
             '66e25f76a7496c429e0aff4b0670f168719bb0ceaeb88c6f2272f2bf3ed21162'
             'd027776fac1f7675b0a9ee817502290b1c45f9c09b0f0a6bb058c35f92361e84'
             '94612f5c0d34a3b7152915c2e285c7b462e9d8e38d3539bd551a339498eac166')
@@ -37,7 +37,7 @@ build() {
       --disable-devel-docs \
       --disable-largefile \
       --enable-glx-tls \
-      --disable-xinerama \
+      --enable-xinerama \
       --enable-config-udev \
       --enable-xorg \
       --disable-dmx \
