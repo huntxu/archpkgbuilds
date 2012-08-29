@@ -1,6 +1,6 @@
 pkgbase=xorg-server
 pkgname=('xorg-server' 'xorg-server-xephyr' 'xorg-server-common' 'xorg-server-devel')
-pkgver=1.12.3.901
+pkgver=1.12.4
 pkgrel=1
 arch=('i686' 'x86_64')
 license=('custom')
@@ -14,7 +14,7 @@ source=(${url}/releases/individual/xserver/${pkgbase}-${pkgver}.tar.bz2
         autoconfig-nvidia.patch
         autoconfig-sis.patch
         10-quirks.conf)
-sha256sums=('5265cfe935e2ad54a287dd3026917c6bfe6191a4f943ca893d1477fdfbe94b2b'
+sha256sums=('8ac07c35306ba3fb3c0972722dd4e919303039eca1d40ac7862560e0b2c94cf7'
             '66e25f76a7496c429e0aff4b0670f168719bb0ceaeb88c6f2272f2bf3ed21162'
             'd027776fac1f7675b0a9ee817502290b1c45f9c09b0f0a6bb058c35f92361e84'
             '94612f5c0d34a3b7152915c2e285c7b462e9d8e38d3539bd551a339498eac166')
