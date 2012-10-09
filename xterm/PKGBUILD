@@ -1,5 +1,5 @@
 pkgname=xterm
-pkgver=281
+pkgver=282
 pkgrel=1
 pkgdesc="X Terminal Emulator"
 arch=('i686' 'x86_64')
@@ -8,7 +8,7 @@ license=('custom')
 depends=('libxft' 'libxaw' 'ncurses' 'xorg-luit')
 source=(ftp://invisible-island.net/${pkgname}/${pkgname}-${pkgver}.tgz
         LICENSE)
-md5sums=('bca2eb95bdd57653f8e3f2f57952c1c5'
+md5sums=('eeac090c7e56ea573f7691d382a59968'
          '10ecc3f8ee91e3189863a172f68282d2')
 
 build() {
@@ -51,4 +51,6 @@ package() {
   install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
   install -m644 "${srcdir}/LICENSE" \
       "${pkgdir}/usr/share/licenses/${pkgname}/"
+  install -m755 -d ${pkgdir}/usr/share/applications
+  install -m644 ${srcdir}/${pkgname}-${pkgver}/{xterm,uxterm}.desktop ${pkgdir}/usr/share/applications/
 }
