@@ -1,5 +1,5 @@
 pkgname=mplayer
-pkgver=35116
+pkgver=35244
 pkgrel=1
 pkgdesc="A movie player for linux"
 arch=('i686' 'x86_64')
@@ -94,8 +94,6 @@ build() {
               --disable-libschroedinger-lavc \
               --disable-libnut \
               --disable-libavcodec_mpegaudio_hp \
-              --enable-tremor-internal \
-              --disable-tremor-low \
               --disable-tremor \
               --disable-speex \
               --disable-libgsm \
