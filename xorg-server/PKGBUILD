@@ -1,7 +1,7 @@
 pkgbase=xorg-server
 pkgname=('xorg-server' 'xorg-server-xephyr' 'xorg-server-common' 'xorg-server-devel')
 pkgver=1.13.0
-pkgrel=2
+pkgrel=3
 arch=('i686' 'x86_64')
 license=('custom')
 url="http://xorg.freedesktop.org"
@@ -13,11 +13,13 @@ options=('!libtool')
 source=(${url}/releases/individual/xserver/${pkgbase}-${pkgver}.tar.bz2
         autoconfig-nvidia.patch
         autoconfig-sis.patch
-        10-quirks.conf)
+        10-quirks.conf
+        0001-dix-fix-zaphod-screen-scrossing-54654.patch)
 sha256sums=('548b91cb01087ad4f892428e7ac4955251cf12393e86c70420436b33848ef28a'
             '66e25f76a7496c429e0aff4b0670f168719bb0ceaeb88c6f2272f2bf3ed21162'
             'd027776fac1f7675b0a9ee817502290b1c45f9c09b0f0a6bb058c35f92361e84'
-            '94612f5c0d34a3b7152915c2e285c7b462e9d8e38d3539bd551a339498eac166')
+            '94612f5c0d34a3b7152915c2e285c7b462e9d8e38d3539bd551a339498eac166'
+            '23861814b4283ca3fe43aae6e88ee82bcbae5713bf88eabeaef7beb94efe9707')
 
 build() {
   cd "${srcdir}/${pkgbase}-${pkgver}"
@@ -27,6 +29,9 @@ build() {
 
   # Use unofficial imedia SiS driver for supported SiS devices
   patch -Np0 -i "${srcdir}/autoconfig-sis.patch"
+
+  # https://bugs.archlinux.org/task/31959 / https://bugs.freedesktop.org/show_bug.cgi?id=54654
+  patch -Np1 -i ${srcdir}/0001-dix-fix-zaphod-screen-scrossing-54654.patch
 
   export CFLAGS=`echo $CFLAGS|sed -r 's/\-flto//g'`
 
