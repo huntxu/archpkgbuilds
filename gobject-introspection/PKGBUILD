@@ -1,6 +1,6 @@
 pkgname=gobject-introspection
 pkgver=1.34.1.1
-pkgrel=1
+pkgrel=2
 pkgdesc="Introspection system for GObject-based libraries"
 url="https://live.gnome.org/GObjectIntrospection"
 arch=('x86_64' 'i686')
