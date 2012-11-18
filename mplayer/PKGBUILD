@@ -1,5 +1,5 @@
 pkgname=mplayer
-pkgver=35244
+pkgver=35421
 pkgrel=1
 pkgdesc="A movie player for linux"
 arch=('i686' 'x86_64')
@@ -107,7 +107,6 @@ build() {
               --disable-twolame \
               --disable-xmms \
               --disable-libdca \
-              --disable-mp3lib \
               --disable-liba52 \
               --enable-libmpeg2 \
               --enable-libmpeg2-internal \
