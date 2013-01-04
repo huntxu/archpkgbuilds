@@ -1,7 +1,7 @@
 pkgbase=xorg-server
 pkgname=('xorg-server' 'xorg-server-xephyr' 'xorg-server-common' 'xorg-server-devel')
-pkgver=1.13.0.902
-pkgrel=2
+pkgver=1.13.1
+pkgrel=1
 arch=('i686' 'x86_64')
 license=('custom')
 url="http://xorg.freedesktop.org"
@@ -15,7 +15,7 @@ source=(${url}/releases/individual/xserver/${pkgbase}-${pkgver}.tar.bz2
         autoconfig-sis.patch
         10-quirks.conf
         use-pixman-glyph-cache.patch)
-sha256sums=('7164157ef3b4ef96499526aa6fea85abf7e1416adc2a4a86614dce09fe36fe8f'
+sha256sums=('c93540e2799df4655c6f1b67dc7d8d6db96df4f08ef1702fffbc5df843a43d00'
             '66e25f76a7496c429e0aff4b0670f168719bb0ceaeb88c6f2272f2bf3ed21162'
             'd027776fac1f7675b0a9ee817502290b1c45f9c09b0f0a6bb058c35f92361e84'
             '94612f5c0d34a3b7152915c2e285c7b462e9d8e38d3539bd551a339498eac166'

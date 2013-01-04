@@ -30,7 +30,9 @@ build() {
         --disable-papi \
         --disable-schemas-compile \
         --disable-gtk-doc \
-        --disable-gtk-doc-html
+        --disable-gtk-doc-html \
+        --enable-x11-backend \
+        --enable-broadway-backend
 
     #https://bugzilla.gnome.org/show_bug.cgi?id=655517
     sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
