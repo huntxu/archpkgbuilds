@@ -1,37 +1,26 @@
 pkgname=xf86-video-nouveau
-_gitdate=20120210
-pkgver=0.0.16_git${_gitdate} # see configure.ac
+pkgver=1.0.4
 pkgrel=1
-pkgdesc="Open Source 3D acceleration driver for nVidia cards (experimental)"
+pkgdesc="Open Source 2D acceleration driver for nVidia cards"
 arch=('i686' 'x86_64')
-url="http://nouveau.freedesktop.org/wiki/"
-license=('GPL') #and MIT, not yet a license file, see http://nouveau.freedesktop.org/wiki/FAQ#head-09f75d03eb30011c754038a3893119a70745de4e
-depends=('libdrm' 'udev')
-optdepends=('nouveau-dri:	experimental gallium3d features')
-makedepends=('xorg-server-devel' 'libdrm' 'xf86driproto')
-conflicts=('xorg-server<1.11.99.902')
+url="http://nouveau.freedesktop.org/"
+license=('GPL')
+depends=('libdrm' 'udev' 'nouveau-dri')
+makedepends=('xorg-server-devel' 'X-ABI-VIDEODRV_VERSION=13' 'resourceproto' 'scrnsaverproto')
+conflicts=('xorg-server<1.13.0' 'X-ABI-VIDEODRV_VERSION<13' 'X-ABI-VIDEODRV_VERSION>=14')
+groups=('xorg-drivers' 'xorg')
 options=('!libtool')
 install=$pkgname.install
-source=(ftp://ftp.archlinux.org/other/$pkgname/xf86-video-nouveau-${_gitdate}.tar.bz2)
-md5sums=('f35c12d64542d0ea792a9e5af63a2e5a')
-
-# source PKGBUILD && mksource
-mksource() {
-	mkdir /tmp/$pkgname-${_gitdate}
-	pushd /tmp/$pkgname-${_gitdate}
-	git clone -v --depth 1 git://anongit.freedesktop.org/nouveau/xf86-video-nouveau
-	cd xf86-video-nouveau
-	git archive --prefix=xf86-video-nouveau-${_gitdate}/ --format=tar HEAD | bzip2 > /tmp/$pkgname-${_gitdate}/$pkgname-${_gitdate}.tar.bz2
-	popd
-}
+source=(http://xorg.freedesktop.org/archive/individual/driver/$pkgname-$pkgver.tar.bz2)
+sha256sums=('1a8290489cf4f48d2094a541ec9a6b68beb80299741d047e322e650c30ceb7c1')
 
 build() {
-  cd $srcdir/xf86-video-nouveau-${_gitdate}
-  ./autogen.sh --prefix=/usr
+  cd $pkgname-$pkgver
+  ./configure --prefix=/usr
   make
 }
 
 package() {
-  cd $srcdir/xf86-video-nouveau-${_gitdate}
-  make DESTDIR=$pkgdir install
+  cd $pkgname-$pkgver
+  make DESTDIR="$pkgdir" install
 }

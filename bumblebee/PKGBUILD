@@ -1,11 +1,11 @@
 pkgname=bumblebee
-pkgver=3.0
-pkgrel=3
+pkgver=3.0.1
+pkgrel=4
 pkgdesc="Bumblebee brings Optimus Support for Linux Through VirtualGL. You need to install proper drivers separately. Can be used with Nouveau or Nvidia"
 arch=('i686' 'x86_64')
-makedepends=('git')
-depends=('virtualgl' 'libbsd' 'glib2')
+depends=('virtualgl' 'glib2')
 optdepends=('xf86-video-nouveau: Nouveau driver' 'nouveau-dri: 3D acceleration features fo Nouveau' 'mesa: 3D acceleration features fo Nouveau'  'bbswitch: switch on/off discrete card' 'nvidia-utils-bumblebee: Nvidia utils not breaking LibGL' 'nvidia: Nvidia kernel driver')
+makedepends=('help2man')
 if [ "$CARCH" = "x86_64" ]; then
      optdepends[${#optdepends[@]}]='lib32-virtualgl: run 32bit applications with optirun'
 fi
@@ -13,23 +13,32 @@ url="http://www.Bumblebee-Project.org"
 license=("GPL3")
 install='bumblebee.install'
 provides=('bumblebee')
-backup=('etc/bumblebee/bumblebee.conf')
-source=("https://github.com/downloads/Bumblebee-Project/Bumblebee/${pkgname}-${pkgver}.tar.gz" 'bumblebeed.in')
-md5sums=('2ddd4d47bc52aceb3b295e68f9f32ffe'
-         '8b05da760e9236ecff2c6820616119f7')
+backup=('etc/bumblebee/bumblebee.conf'
+    'etc/bumblebee/xorg.conf.nouveau')
+source=("https://github.com/downloads/Bumblebee-Project/Bumblebee/${pkgname}-${pkgver}.tar.gz"
+        '99-remove-nvidia-dev.rules' 'remove_rmmod_wait_option.fix.patch')
 
 build() {
     cd "${srcdir}/${pkgname}-${pkgver}"
     ./configure \
         --prefix=/usr \
-        --sysconfdir=/etc
+        --sysconfdir=/etc \
+        --without-pidfile
+    patch -Np1 < ../remove_rmmod_wait_option.fix.patch
     make
 }
 
 package() {
     cd "${srcdir}/${pkgname}-${pkgver}"
     make install DESTDIR="$pkgdir"
-    install -D -m755 "$srcdir/bumblebeed.in" "$pkgdir/etc/rc.d/bumblebeed"
+    # Install systemd unit
+    install -D -m644 "scripts/systemd/bumblebeed.service" "${pkgdir}/usr/lib/systemd/system/bumblebeed.service"    
     # Make bash_completion work
     mv -v "${pkgdir}/etc/bash_completion.d/bumblebee" "${pkgdir}/etc/bash_completion.d/optirun"
+    #Install udev rule to prevent GH-#144
+    install -D -m644 "$srcdir/99-remove-nvidia-dev.rules" "${pkgdir}/lib/udev/rules.d/99-remove-nvidia-dev.rules"
 }
+md5sums=('7b3fd4bfa0d59e877abdb75cbdba30f8'
+         'b2a411f8610107946a9bec3bcb282f7b'
+	 '628e2ed7ec9bc5aeb22a592b0199f27e')
+
