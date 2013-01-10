@@ -1,15 +1,10 @@
-pkgname=pidgin
+pkgname=('pidgin' 'libpurple')
 pkgver=2.10.6
-pkgrel=2
+pkgrel=4
 arch=('i686' 'x86_64')
 url="http://pidgin.im/"
 license=('GPL')
-depends=('gnutls' 'nss' 'dbus-glib' 'hicolor-icon-theme' 'startup-notification' 'libxss')
-makedepends=('intltool' 'ca-certificates' 'git' 'python2')
-optdepends=('avahi: Bonjour protocol support'
-            'tk: Tcl/Tk scripting support'
-            'ca-certificates: SSL CA certificates')
-install=pidgin.install
+makedepends=('gnutls' 'nss' 'dbus-glib' 'hicolor-icon-theme' 'startup-notification' 'libxss' 'intltool' 'ca-certificates' 'python2')
 source=(http://downloads.sourceforge.net/$pkgname/$pkgname-$pkgver.tar.bz2)
 sha256sums=('3e25a633b97cbfa8326999a30282e7a662a9b9bbf2853be84af0b8fb60392c96')
 
@@ -61,5 +56,33 @@ build() {
     --with-system-ssl-certs=/etc/ssl/certs \
     --with-python=/usr/bin/python2
   make
-  make DESTDIR="$pkgdir" install
+}
+
+package_pidgin(){
+  pkgdesc="Multi-protocol instant messaging client"
+  depends=('libpurple' 'startup-notification' 'libxss' 'hicolor-icon-theme')
+  install=pidgin.install
+
+  cd "$srcdir/pidgin-$pkgver"
+
+  # For linking
+  make -C libpurple DESTDIR="$pkgdir" install-libLTLIBRARIES
+
+  make -C pidgin DESTDIR="$pkgdir" install
+  make -C doc DESTDIR="$pkgdir" install
+
+  # Remove files that are packaged in libpurle
+  make -C libpurple DESTDIR="$pkgdir" uninstall-libLTLIBRARIES
+}
+
+package_libpurple(){
+  pkgdesc="IM library extracted from Pidgin"
+  depends=('gnutls' 'libsasl' 'dbus-glib' 'nss')
+  optdepends=('ca-certificates: SSL CA certificates' 'python2-dbus: for purple-remote and purple-url-handler')
+
+  cd "$srcdir/pidgin-$pkgver"
+
+  for _dir in libpurple share/sounds share/ca-certs m4macros; do
+    make -C "$_dir" DESTDIR="$pkgdir" install
+  done
 }
