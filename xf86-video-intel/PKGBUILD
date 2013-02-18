@@ -1,5 +1,5 @@
 pkgname=xf86-video-intel
-pkgver=2.20.19
+pkgver=2.21.2
 pkgrel=1
 arch=(i686 x86_64)
 url="http://xorg.freedesktop.org/"
@@ -15,7 +15,7 @@ conflicts=('xorg-server<1.13.0' 'X-ABI-VIDEODRV_VERSION<13' 'X-ABI-VIDEODRV_VERS
 options=('!libtool')
 groups=('xorg-drivers' 'xorg')
 source=(${url}/archive/individual/driver/${pkgname}-${pkgver}.tar.bz2)
-sha256sums=('b9b20efe3118beaaa0f71954c9407a59bb439bf43dabe0eb4f1b62051cdbc74c')
+sha256sums=('2e6890ecacc715caa5459581b00b63152e08646ea1b76330bf79b996a139d850')
 
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"

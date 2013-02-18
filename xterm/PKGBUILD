@@ -1,5 +1,5 @@
 pkgname=xterm
-pkgver=288
+pkgver=290
 pkgrel=1
 pkgdesc="X Terminal Emulator"
 arch=('i686' 'x86_64')
@@ -8,7 +8,7 @@ license=('custom')
 depends=('libxft' 'libxaw' 'ncurses' 'xorg-luit' 'libutempter')
 source=(ftp://invisible-island.net/${pkgname}/${pkgname}-${pkgver}.tgz
         LICENSE)
-md5sums=('b9bef1abf6e397be6fa2e5f534964d17'
+md5sums=('92ce4a161dc4a16daa987e5a6511da61'
          '10ecc3f8ee91e3189863a172f68282d2')
 
 build() {

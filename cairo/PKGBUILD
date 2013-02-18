@@ -1,18 +1,19 @@
 pkgname=cairo
-pkgver=1.12.12
+pkgver=1.12.14
 pkgrel=1
 pkgdesc="Cairo vector graphics library"
 arch=(i686 x86_64)
 license=('LGPL' 'MPL')
 url="http://cairographics.org/"
-depends=('libpng' 'libxrender' 'libxext' 'fontconfig' 'pixman>=0.28.0' 'glib2' 'sh')
-makedepends=('librsvg' 'poppler-glib' 'libspectre') # 'libdrm')
-optdepends=('xcb-util: for XCB backend') # really needed?
+depends=('libpng' 'libxrender' 'libxext' 'fontconfig' 'pixman>=0.28.0' 'glib2' 'sh'
+         'libgl' 'libegl')
+makedepends=('mesa' 'librsvg' 'gtk2' 'poppler-glib' 'libspectre') # 'libdrm')
+#optdepends=('xcb-util: for XCB backend') # really needed?
 provides=('cairo-xcb')
 replaces=('cairo-xcb')
 options=('!libtool')
 source=(http://cairographics.org/releases/$pkgname-$pkgver.tar.xz)
-sha1sums=('8e597874da5b861287893d87dd4ab32471e99c82')
+sha1sums=('9106ab09b2e7b9f90521b18dd4a7e9577eba6c15')
 
 build() {
   cd "$srcdir/$pkgname-$pkgver"
@@ -22,15 +23,16 @@ build() {
         --localstatedir=/var \
         --disable-static \
         --enable-tee \
+        --enable-gl \
+        --enable-egl \
+        --enable-svg \
+        --enable-ps \
+        --enable-pdf \
+        --enable-gobject \
         --enable-xcb \
         --enable-xlib-xcb
   make
 }
-
-#check() {
-#  cd "$srcdir/$pkgname-$pkgver"
-#  make check || /bin/true
-#}
 
 package() {
   cd "$srcdir/$pkgname-$pkgver"
