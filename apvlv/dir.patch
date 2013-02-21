@@ -1,14 +1,14 @@
-diff -Nur apvlv-0.1.4.orig/src/ApvlvUtil.cc apvlv-0.1.4/src/ApvlvUtil.cc
---- apvlv-0.1.4.orig/src/ApvlvUtil.cc	2012-02-18 23:38:05.000000000 +0800
-+++ apvlv-0.1.4/src/ApvlvUtil.cc	2012-02-25 01:29:30.957261695 +0800
+diff -Nur apvlv-0.1.4.20121023.bak/src/ApvlvUtil.cc apvlv-0.1.4.20121023/src/ApvlvUtil.cc
+--- apvlv-0.1.4.20121023.bak/src/ApvlvUtil.cc	2012-09-27 09:08:02.000000000 +0800
++++ apvlv-0.1.4.20121023/src/ApvlvUtil.cc	2013-02-21 22:37:56.686079940 +0800
 @@ -58,8 +58,8 @@
- string iconreg = string (DOCDIR) + "/icons/reg.png";
- string icondir = string (DOCDIR) + "/icons/dir.png";
- string iconpdf = string (DOCDIR) + "/icons/pdf.png";
--string inifile = "~/.apvlvrc";
--string sessionfile = "~/.apvlvinfo";
-+string inifile = "~/.config/apvlv/apvlvrc";
-+string sessionfile = "~/.config/apvlv/apvlvinfo";
+   string iconreg = string (DOCDIR) + "/icons/reg.png";
+   string icondir = string (DOCDIR) + "/icons/dir.png";
+   string iconpdf = string (DOCDIR) + "/icons/pdf.png";
+-  string inifile = "~/.apvlvrc";
+-  string sessionfile = "~/.apvlvinfo";
++  string inifile = "~/.config/apvlv/apvlvrc";
++  string sessionfile = "~/.config/apvlv/apvlvinfo";
  #endif
  
- // Converts the path given to a absolute path.
+   // Converts the path given to a absolute path.
