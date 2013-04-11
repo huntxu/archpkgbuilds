@@ -1,5 +1,5 @@
 pkgname=xf86-video-intel
-pkgver=2.21.3
+pkgver=2.21.6
 pkgrel=1
 arch=(i686 x86_64)
 url="http://xorg.freedesktop.org/"
@@ -7,27 +7,25 @@ license=('custom')
 install=$pkgname.install
 pkgdesc="X.org Intel i810/i830/i915/945G/G965+ video drivers"
 depends=('intel-dri' 'libxvmc' 'xcb-util>=0.3.9' 'systemd')
-makedepends=('xorg-server-devel' 'X-ABI-VIDEODRV_VERSION=13' 'resourceproto' 'scrnsaverproto' 'libx11' 'libxrender')
+makedepends=('xorg-server-devel' 'X-ABI-VIDEODRV_VERSION=14' 'resourceproto' 'scrnsaverproto' 'libx11' 'libxrender')
 replaces=('xf86-video-intel-uxa' 'xf86-video-intel-sna')
 provides=('xf86-video-intel-uxa' 'xf86-video-intel-sna')
-conflicts=('xorg-server<1.13.0' 'X-ABI-VIDEODRV_VERSION<13' 'X-ABI-VIDEODRV_VERSION>=14'
+conflicts=('xorg-server<1.14.0' 'X-ABI-VIDEODRV_VERSION<14' 'X-ABI-VIDEODRV_VERSION>=15'
            'xf86-video-intel-sna' 'xf86-video-intel-uxa' 'xf86-video-i810' 'xf86-video-intel-legacy')
 options=('!libtool')
 groups=('xorg-drivers' 'xorg')
 source=(${url}/archive/individual/driver/${pkgname}-${pkgver}.tar.bz2)
-sha256sums=('1ce672a042226dba776649e9067827c24fbb27383c78919a372265bb0d939dbb')
+sha256sums=('c3ef371e72544350c878d5373b2e7f49b8a0e253f9b63cb1ce2881180b45f8d9')
 
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"
+  export CFLAGS=`echo $CFLAGS|sed -r 's/\-flto//g'`
   ./configure --prefix=/usr \
-              --disable-maintainer-mode \
               --enable-silent-rules \
               --enable-dri \
               --enable-kms-only \
               --enable-sna \
               --enable-userptr \
-              --enable-fast-reloc \
-              --enable-handle-lut \
               --enable-async-swap
   make
 }

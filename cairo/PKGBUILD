@@ -1,13 +1,12 @@
 pkgname=cairo
 pkgver=1.12.14
-pkgrel=1
+pkgrel=3
 pkgdesc="Cairo vector graphics library"
 arch=(i686 x86_64)
 license=('LGPL' 'MPL')
 url="http://cairographics.org/"
-depends=('libpng' 'libxrender' 'libxext' 'fontconfig' 'pixman>=0.28.0' 'glib2' 'sh'
-         'libgl' 'libegl')
-makedepends=('mesa' 'librsvg' 'gtk2' 'poppler-glib' 'libspectre') # 'libdrm')
+
+makedepends=('mesa>=9.1' 'mesa-libgl>=9.1' 'librsvg' 'gtk2' 'poppler-glib' 'libspectre')
 #optdepends=('xcb-util: for XCB backend') # really needed?
 provides=('cairo-xcb')
 replaces=('cairo-xcb')
@@ -35,6 +34,8 @@ build() {
 }
 
 package() {
+  depends=('libpng' 'libxrender' 'libxext' 'fontconfig' 'pixman>=0.28.0' 'glib2' 'mesa>=9.1' 'libgl' 'sh') 
+
   cd "$srcdir/$pkgname-$pkgver"
   make DESTDIR="$pkgdir" install
 }
